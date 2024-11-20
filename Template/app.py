@@ -45,6 +45,14 @@ def fetch_table():
 
     except mysql.connector.Error as err:
         return f"Error: {err}"
+    
+def send_purchase():
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor()
+    query = "SELECT * FROM users"  # Replace with your query that sends purchase data to the purchase table
+
+    cursor.close()
+    conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
