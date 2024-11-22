@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style_1.css">
+
+    <title>BMW Pittsburgh Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 60%;
+            height: 100vh;
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 80px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+
+
+        }
+        .login-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .login-container input[type="text"],
+        .login-container input[type="password"],
+        .login-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0078d7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #005cbf;
+        }
+    </style>
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const userType = document.getElementById('user-type').value;
+            const defaultStaffUsername = 'staffUser';
+            const defaultStaffPassword = 'staffPass123';
+
+            if (userType === 'staff' && username === defaultStaffUsername && password === defaultStaffPassword) {
+                window.location.href = 'index2.html';
+            } else if (userType === 'customer') {
+                window.location.href = 'index.html';
+            } else {
+                alert('Invalid credentials for staff user.');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Welcome!</h2>
+
+        <h2>BMW Pittsburgh Login</h2>
+        <form onsubmit="handleLogin(event)">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="user-type">I am a:</label>
+            <select id="user-type" name="user_type" required>
+                <option value="customer">Customer</option>
+                <option value="staff">Staff</option>
+            </select>
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>

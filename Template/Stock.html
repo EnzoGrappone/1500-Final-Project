@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="Style_8.css">
+    <title>SQL Query Executor</title>
+    <script> function checkPasscode()
+    { var passcode = prompt("Enter passcode:");
+    if (passcode === "1234") {
+      document.getElementById("employeeDropdown").style.display = "block";
+    }
+    else {
+       alert("Incorrect passcode. Access denied.");
+     }
+   }
+ </script>
+</head>
+<body>
+  <div class="column">
+  <img src="BMW-Logo.png" alt="A picture of BMW logo" style="width:7%; max-height:7%">
+  <p>BMW Pittsburgh</p>
+
+
+
+  <div class="dropdown">
+  <button class="dropb" >Employee</button>
+  <div class="dropdown-content" >
+    <a href="index2.html">Main</a>
+    <a href="findcar.html">Find a car</a>
+    <a href="findemployee.html">Find an employee Record</a>
+    <a href="findservice.html">Find a Service Record</a>
+    <a href="findsale.html">Find a Sale</a>
+    <a href="findcustomer.html">Find a Customer</a>
+
+
+
+  </div>
+</div>
+
+
+</div>
+
+  <div class="newtext">
+    <h2>Search for inventory</h2>
+  </div>
+  <div class="newtext">
+
+    <h3><form action="/results.html" method="post">
+
+        <textarea name="query" rows="5" cols="80"></textarea><br></h3>
+        <h3><input type="submit" value="Find"></h3>
+    </form>
+  </div>
+
+  <div class="new2text">
+  	<p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
+  </div>
+
+</body>
+</html>
