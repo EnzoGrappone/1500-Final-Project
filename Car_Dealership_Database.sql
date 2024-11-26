@@ -101,7 +101,7 @@ CREATE TABLE sale (
     sale_date DATE,
     sale_price INT,
     employee_id VARCHAR(3),
-    FOREIGN KEY (customer_email) REFERENCES customer(customer_email)
+    FOREIGN KEY (customer_email) REFERENCES cust_contact(customer_email)
 		ON DELETE SET NULL,
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
 		ON DELETE SET NULL,
