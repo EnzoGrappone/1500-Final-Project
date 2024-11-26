@@ -1,7 +1,11 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template
 import mysql.connector
 
 app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 # Database configuration
 db_config = {
@@ -11,38 +15,35 @@ db_config = {
     'database': 'bmw_dealership_db'
 }
 
-#customer car searching method
-
-@app.route('/car_search')
+@app.route('/car_search', methods=['GET', 'POST'])
 def car_search():
-    # Get user inputs
+    # Get user inputs from the form
     model = request.args.get('model')
     car_year = request.args.get('car_year')
     manufacturing_country = request.args.get('manufacturing_country')
     msrp_min = request.args.get('msrp_min')
     msrp_max = request.args.get('msrp_max')
 
+    # Base SQL query
     query = "SELECT * FROM car_type WHERE 1=1"
     params = []
 
+    # Add conditions based on user input
     if model:
         query += " AND model LIKE %s"
         params.append(f"%{model}%")
-    if car_year:
-        if car_year.isdigit():  # Validate numeric input
-            query += " AND car_year = %s"
-            params.append(car_year)
+    if car_year and car_year.isdigit():  # Validate numeric input
+        query += " AND car_year = %s"
+        params.append(car_year)
     if manufacturing_country:
         query += " AND manufacturing_country LIKE %s"
         params.append(f"%{manufacturing_country}%")
-    if msrp_min:
-        if msrp_min.isdigit():  # Validate numeric input
-            query += " AND msrp >= %s"
-            params.append(msrp_min)
-    if msrp_max:
-        if msrp_max.isdigit():  # Validate numeric input
-            query += " AND msrp <= %s"
-            params.append(msrp_max)
+    if msrp_min and msrp_min.isdigit():  # Validate numeric input
+        query += " AND msrp >= %s"
+        params.append(msrp_min)
+    if msrp_max and msrp_max.isdigit():  # Validate numeric input
+        query += " AND msrp <= %s"
+        params.append(msrp_max)
 
     try:
         # Database connection
@@ -52,29 +53,36 @@ def car_search():
         rows = cursor.fetchall()
         headers = [desc[0] for desc in cursor.description]
 
-        # Build HTML table
-        html_table = """
-        <table border="1">
-            <thead>
-                <tr>{}</tr>
-            </thead>
-            <tbody>
-                {}
-            </tbody>
-        </table>
-        """.format(
-            "".join(f"<th>{col}</th>" for col in headers),
-            "".join(
-                "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
-                for row in rows
+        # Handle empty results
+        if rows:
+            # Build HTML table
+            html_table = """
+            <table border="1">
+                <thead>
+                    <tr>{}</tr>
+                </thead>
+                <tbody>
+                    {}
+                </tbody>
+            </table>
+            """.format(
+                "".join(f"<th>{col}</th>" for col in headers),
+                "".join(
+                    "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
+                    for row in rows
+                )
             )
-        )
+        else:
+            html_table = "<p>No results found.</p>"
 
         # Return rendered HTML
         return render_template_string("""
         <html>
         <body>
+            <h2>Search Results</h2>
             {{ table|safe }}
+            <br>
+            <a href="/car_search">Back to Search</a>
         </body>
         </html>
         """, table=html_table)
@@ -85,18 +93,6 @@ def car_search():
     finally:
         cursor.close()
         conn.close()
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
-def send_purchase():
-    conn = mysql.connector.connect(**db_config)
-    cursor = conn.cursor()
-    query = "SELECT * FROM users"  # Replace with your query that sends purchase data to the purchase table
-
-    cursor.close()
-    conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
