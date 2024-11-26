@@ -11,84 +11,48 @@ db_config = {
     'database': 'my_database'
 }
 
+#customer car searching method
+
 @app.route('/search')
 def search():
+    # Get user inputs
     model = request.args.get('model')
     car_year = request.args.get('car_year')
-    manufacturing_country = request.args.get(' manufacturing_country')
+    manufacturing_country = request.args.get('manufacturing_country')
     msrp_min = request.args.get('msrp_min')
     msrp_max = request.args.get('msrp_max')
 
     query = "SELECT * FROM car_type WHERE 1=1"
+    params = []
+
     if model:
-        query += f" AND model LIKE '%{model}%'"
+        query += " AND model LIKE %s"
+        params.append(f"%{model}%")
     if car_year:
-        query += f" AND car_year = {car_year}"
+        if car_year.isdigit():  # Validate numeric input
+            query += " AND car_year = %s"
+            params.append(car_year)
     if manufacturing_country:
-        query += f" AND manufacturing_country LIKE '%{ manufacturing_country}%'"
+        query += " AND manufacturing_country LIKE %s"
+        params.append(f"%{manufacturing_country}%")
     if msrp_min:
-        query += f" AND msrp >= {msrp_min}"
+        if msrp_min.isdigit():  # Validate numeric input
+            query += " AND msrp >= %s"
+            params.append(msrp_min)
     if msrp_max:
-        query += f" AND msrp <= {msrp_max}"
+        if msrp_max.isdigit():  # Validate numeric input
+            query += " AND msrp <= %s"
+            params.append(msrp_max)
 
     try:
+        # Database connection
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-        cursor.execute(query)
+        cursor.execute(query, params)  # Use parameterized query
         rows = cursor.fetchall()
         headers = [desc[0] for desc in cursor.description]
-        cursor.close()
-        conn.close()
 
-        html_table = """
-        <table border="1">
-            <thead>
-                <tr>{}</tr>
-            </thead>
-            <tbody>
-                {}
-            </tbody>
-        </table>
-        """.format(
-            "".join(f"<th>{col}</th>" for col in headers),
-            "".join(
-                "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
-                for row in rows
-            )
-     )
-     return render_template_string("""
-     <html>
-     <body>
-        {{ table|safe }}
-      </body>
-      </html>
-      """, table=html_table)
-
-       except mysql.connector.Error as err:
-           return f"Error: {err}"
-
-           if __name__ == '__main__':
-               app.run(debug=True)
-
-
-
-
-
-
-@app.route('/fetch-table')
-def fetch_table():
-    # Query the database
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-        query = "SELECT * FROM users"  # Replace with your query
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        headers = [desc[0] for desc in cursor.description]  # Get column names
-        cursor.close()
-        conn.close()
-
-        # Render data as an HTML table
+        # Build HTML table
         html_table = """
         <table border="1">
             <thead>
@@ -105,10 +69,26 @@ def fetch_table():
                 for row in rows
             )
         )
-        return html_table
+
+        # Return rendered HTML
+        return render_template_string("""
+        <html>
+        <body>
+            {{ table|safe }}
+        </body>
+        </html>
+        """, table=html_table)
 
     except mysql.connector.Error as err:
         return f"Error: {err}"
+
+    finally:
+        cursor.close()
+        conn.close()
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
 def send_purchase():
     conn = mysql.connector.connect(**db_config)
