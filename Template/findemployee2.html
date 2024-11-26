@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="Style_8.css">
+    <link rel="stylesheet" type="text/css" href="Style_3.css">
     <title>SQL Query Executor</title>
     <script> function checkPasscode()
     { var passcode = prompt("Enter passcode:");
@@ -24,31 +24,26 @@
 
 
   <div class="dropdown">
-  <button class="dropb" >Employee</button>
-  <div class="dropdown-content" >
-    <a href="index2.html">Main</a>
-    <a href="Stock.html">In stock</a>
-    <a href="findemployee.html">Find an employee Record</a>
-    <a href="findservice.html">Find a Service Record</a>
-    <a href="findsale.html">Find a Sale</a>
-    <a href="findcustomer.html">Find a Customer</a>
-
-
+  <button class="dropb">Customer</button>
+  <div class="dropdown-content">
+    <a href="index.html">Main</a>
+    <a href="findcar.html">Find a car</a>
+    <a href="purchasecar.html">Purchase a car</a>
+    <a href="findemployee.html">Contact us</a>
 
   </div>
-</div>
-
+  </div>
 
 </div>
 
   <div class="newtext">
-    <h2>Search for inventory</h2>
+    <h2>Who are you looking for today?</h2>
   </div>
   <div class="newtext">
 
     <h3><form action="/results.html" method="post">
 
-        <textarea name="query" rows="5" cols="80"></textarea><br></h3>
+        <textarea name="query" rows="5" cols="80" placeholder="Search.." name="search"></textarea><br></h3>
         <h3><input type="submit" value="Find"></h3>
     </form>
   </div>
