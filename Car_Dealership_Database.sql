@@ -2,20 +2,20 @@ CREATE DATABASE
 BMW_dealership_DB;
 USE BMW_dealership_DB;
 CREATE TABLE car_type (
+	type_id VARCHAR (5),
 	model VARCHAR(25),
     car_year INT,
     manufacturing_country VARCHAR(25),
 	msrp INT,
-    PRIMARY KEY (model, car_year)
+    PRIMARY KEY (type_id)
 );
 
 CREATE TABLE new_inventory (
-	vin CHAR(17),
-    model VARCHAR(25),
+	type_id VARCHAR(5),
+    vin CHAR(17),
     color VARCHAR(15),
-    car_year INT,
     PRIMARY KEY (vin),
-    FOREIGN KEY (model, car_year) REFERENCES car_type(model, car_year)
+    FOREIGN KEY (type_id) REFERENCES car_type(type_id)
 );
 
 CREATE TABLE used_inventory (
@@ -78,18 +78,17 @@ CREATE TABLE employee (
 );
 
 CREATE TABLE service (
+	type_id VARCHAR(5),
 	service_id VARCHAR(10),
     customer_email VARCHAR(256),
-    model VARCHAR(15),
     license_plate_number VARCHAR(10),
     color VARCHAR(15),
     service_type VARCHAR(25),
     appointment_date DATE,
     employee_id VARCHAR(3),
-    car_year INT,
     FOREIGN KEY (customer_email) REFERENCES customer(customer_email)
 		ON DELETE SET NULL,
-    FOREIGN KEY (model, car_year) REFERENCES car_type(model, car_year),
+    FOREIGN KEY (type_id) REFERENCES car_type(type_id),
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
 		ON DELETE SET NULL,
     PRIMARY KEY (service_id)
