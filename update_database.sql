@@ -1,4 +1,4 @@
-car_typecar_typecar_typeINSERT INTO car_type(model,car_year,manufacturing_country,msrp) VALUES
+INSERT INTO car_type(model,car_year,manufacturing_country,msrp) VALUES
  ('230i',2024,'Mexico',39200)
 ,('M240i',2024,'Mexico',50100)
 ,('M2',2024,'Mexico',64900)
