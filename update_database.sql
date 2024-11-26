@@ -42,24 +42,6 @@ INSERT INTO car_type(type_id,model,car_year,manufacturing_country,msrp) VALUES
 ,('T41','Z4 sDrive30i',2024,'Austria',57150)
 ,('T42','Z4 M40i',2024,'Austria',72900);
 
-INSERT INTO employee(employee_id, first_name,last_name,department_id,email) VALUES
- ('E1','Damion','Briley','D1','DB@gmail.com')
-,('E2','Ava','Mitchell','D1','ava.mitchell@hotmail.com')
-,('E3','Noah','Parker','D1','noah.parker@gmail.com')
-,('E4','Olivia','Harrison','D1','olivia.harrison@gmail.com')
-,('E5','Liam','Turner','D1','liam.turner@gmail.com')
-,('E6','Emma','Brooks','D2','emma.brooks@gmail.com')
-,('E7','Sophia','Morgan','D2','sophia.morgan@gmail.com')
-,('E8','Lucas','Bennett','D2','lucas.bennett@gmail.com')
-,('E9','Amelia','Walker','D2','amelia.walker@gmail.com')
-,('E10','Ethan','Reed','D3','ethan.reed@gmail.com')
-,('E11','Harper','Foster','D3','harper.foster@gmail.com')
-,('E12','Jackson','Hughes','D3','jackson.hughes@gmail.com')
-,('E13','Henry','Carter','D3','henry.carter@gmail.com')
-,('E14','Mia','Richardson','D4','mia.richardson@gmail.com')
-,('E15','Audrey','Cooper','D4','audrey.cooper@gmail.com')
-,('E16','Samuel','Grant','D4','samuel.grant@gmail.com');
-
 
 INSERT INTO new_inventory(vin,type_id,color) VALUES
  ('4T1BF1FK9CU602278','T1','Blue')
@@ -214,6 +196,24 @@ INSERT INTO emp_info(email,phone_number,address,DOB,salary) VALUES
 ,('mia.richardson@gmail.com',14123456780,'305 Magnolia Street Charleston SC 29401','1983-10-06',55000)
 ,('audrey.cooper@gmail.com',13224567891,'1017 Laurel Avenue Minneapolis MN 55401','1997-03-25',60000)
 ,('samuel.grant@gmail.com',14525678902,'2258 Sycamore Road Portland OR 97201','1989-06-10',75000);
+
+INSERT INTO employee(employee_id, first_name,last_name,department_id,email) VALUES
+ ('E1','Damion','Briley','D1','DB@gmail.com')
+,('E2','Ava','Mitchell','D1','ava.mitchell@hotmail.com')
+,('E3','Noah','Parker','D1','noah.parker@gmail.com')
+,('E4','Olivia','Harrison','D1','olivia.harrison@gmail.com')
+,('E5','Liam','Turner','D1','liam.turner@gmail.com')
+,('E6','Emma','Brooks','D2','emma.brooks@gmail.com')
+,('E7','Sophia','Morgan','D2','sophia.morgan@gmail.com')
+,('E8','Lucas','Bennett','D2','lucas.bennett@gmail.com')
+,('E9','Amelia','Walker','D2','amelia.walker@gmail.com')
+,('E10','Ethan','Reed','D3','ethan.reed@gmail.com')
+,('E11','Harper','Foster','D3','harper.foster@gmail.com')
+,('E12','Jackson','Hughes','D3','jackson.hughes@gmail.com')
+,('E13','Henry','Carter','D3','henry.carter@gmail.com')
+,('E14','Mia','Richardson','D4','mia.richardson@gmail.com')
+,('E15','Audrey','Cooper','D4','audrey.cooper@gmail.com')
+,('E16','Samuel','Grant','D4','samuel.grant@gmail.com');
 
 INSERT INTO service(service_id,customer_email,type_id,license_plate_number,color,service_type,appointment_date,employee_id) VALUES
  ('SE1','david.lawrance@gmail.com','T5','NUW-3445','Orange','Oil & Filter Change','2024-12-18','E10')
