@@ -1,11 +1,12 @@
 import mysql.connector
 
 def test_connection():
+    conn = None
     try:
         conn = mysql.connector.connect(
-            host='BMW_Database',
+            host='127.0.0.1',
             user='root',
-            password='password',
+            password='admin',
             database='bmw_dealership_db'
         )
         if conn.is_connected():
