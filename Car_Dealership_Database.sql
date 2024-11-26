@@ -40,7 +40,7 @@ CREATE TABLE customer (
 
 CREATE TABLE cust_contact (
 	customer_email VARCHAR(256),
-    phone_number CHAR(11),
+    phone_number CHAR(20),
     address VARCHAR (256),
     DOB DATE,
     PRIMARY KEY (customer_email),
@@ -49,7 +49,7 @@ CREATE TABLE cust_contact (
 );
 
 CREATE TABLE department (
-	department_id INT,
+	department_id VARCHAR(2),
     department_name VARCHAR(15),
     department_size INT,
     PRIMARY KEY (department_id)
@@ -68,7 +68,7 @@ CREATE TABLE employee (
 	employee_id INT,
     first_name VARCHAR(25),
     last_name VARCHAR(25),
-    department_id INT,
+    department_id VARCHAR(2),
     email VARCHAR(256),
     PRIMARY KEY (employee_id),
     FOREIGN KEY (department_id) REFERENCES department(department_id)
@@ -81,7 +81,7 @@ CREATE TABLE service (
 	service_id INT,
     customer_email VARCHAR(256),
     model VARCHAR(15),
-    liscense_plate_number VARCHAR(10),
+    license_plate_number VARCHAR(10),
     color VARCHAR(15),
     service_type VARCHAR(25),
     appointment_date DATE,
