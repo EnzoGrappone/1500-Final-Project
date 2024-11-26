@@ -5,57 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="style_1.css">
     <title>SQL Query Executor</title>
-    <script> function checkPasscode()
-    { var passcode = prompt("Enter passcode:");
-    if (passcode === "1234") {
-      document.getElementById("employeeDropdown").style.display = "block";
-    }
-    else {
-       alert("Incorrect passcode. Access denied.");
-     }
-   }
- </script>
+    <script>
+        function checkPasscode() {
+            var passcode = prompt("Enter passcode:");
+            if (passcode === "1234") {
+                document.getElementById("employeeDropdown").style.display = "block";
+            } else {
+                alert("Incorrect passcode. Access denied.");
+            }
+        }
+    </script>
 </head>
 <body>
   <div class="column">
-  <img src="BMW-Logo.png" alt="A picture of BMW logo" style="width:7%; max-height:7%">
-  <p>BMW Pittsburgh</p>
+    <img src="BMW-Logo.png" alt="A picture of BMW logo" style="width:7%; max-height:7%">
+    <p>BMW Pittsburgh</p>
 
-  <div class="dropdown">
-  <button class="dropb">Customer</button>
-  <div class="dropdown-content">
-    <a href="index.html">Main</a>
-    <a href="findcar.html">Find a car</a>
-    <a href="purchasecar.html">Purchase a car</a>
-    <a href="findemployee2.html">Contact us</a>
-
+    <div class="dropdown">
+      <button class="dropb">Customer</button>
+      <div class="dropdown-content">
+        <a href="{{ url_for('home') }}">Main</a>  <!-- Home route -->
+        <a href="{{ url_for('find_car') }}">Find a car</a>
+        <a href="{{ url_for('purchase_car') }}">Purchase a car</a>
+        <a href="{{ url_for('find_employee') }}">Contact us</a>
+      </div>
+    </div>
   </div>
-</div>
-
-
-<!-- onclick="fetchTable()" you can run this on click to fetch a table with the associated query -->
-
-
-
-</div>
 
   <div class="newtext">
     <h2>Welcome! Please use the dropdown box on the top left to navigate.</h2>
   </div>
-  <div class="newtext">
 
+  <div class="newtext">
     <h3>The Ultimate Driving Machine.</h3>
   </div>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
 
+  <br><br><br><br><br>
 
   <div class="new2text">
-  	<p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
+    <p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
   </div>
-
 </body>
 </html>

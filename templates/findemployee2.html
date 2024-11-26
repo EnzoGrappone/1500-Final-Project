@@ -26,10 +26,10 @@
   <div class="dropdown">
   <button class="dropb">Customer</button>
   <div class="dropdown-content">
-    <a href="index.html">Main</a>
-    <a href="findcar.html">Find a car</a>
-    <a href="purchasecar.html">Purchase a car</a>
-    <a href="findemployee.html">Contact us</a>
+    <a href="{{ url_for('home') }}">Main</a>
+    <a href="{{ url_for('find_car') }}">Find a car</a>
+    <a href="{{ url_for('purchase_car') }}">Purchase a car</a>
+    <a href="{{ url_for('find_employee') }}">Contact us</a>
 
   </div>
   </div>

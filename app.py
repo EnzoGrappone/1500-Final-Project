@@ -7,6 +7,18 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
+@app.route('/findcar')
+def find_car():
+    return render_template('Findcar.html')
+
+@app.route('/purchasecar')
+def purchase_car():
+    return render_template('purchasecar.html')
+
+@app.route('/findemployee2')
+def find_employee():
+    return render_template('findemployee2.html')
+
 # Database configuration
 db_config = {
     'host': '127.0.0.1',
