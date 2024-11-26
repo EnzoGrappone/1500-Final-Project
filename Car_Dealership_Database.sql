@@ -3,7 +3,7 @@ BMW_dealership_DB;
 USE BMW_dealership_DB;
 CREATE TABLE car_type (
 	model VARCHAR(25),
-    car_year YEAR,
+    car_year INT,
     manufacturing_country VARCHAR(25),
 	msrp INT,
     PRIMARY KEY (model, car_year)
@@ -11,9 +11,9 @@ CREATE TABLE car_type (
 
 CREATE TABLE new_inventory (
 	vin CHAR(17),
-    model VARCHAR(15),
+    model VARCHAR(25),
     color VARCHAR(15),
-    car_year YEAR,
+    car_year INT,
     PRIMARY KEY (vin),
     FOREIGN KEY (model, car_year) REFERENCES car_type(model, car_year)
 );
@@ -22,7 +22,7 @@ CREATE TABLE used_inventory (
 	vin CHAR(17),
     brand VARCHAR(15),
     model VARCHAR(15),
-    car_year YEAR,
+    car_year INT,
     color VARCHAR(15),
     mileage INT,
     car_condition VARCHAR(15),
@@ -86,7 +86,7 @@ CREATE TABLE service (
     service_type VARCHAR(25),
     appointment_date DATE,
     employee_id VARCHAR(3),
-    car_year YEAR,
+    car_year INT,
     FOREIGN KEY (customer_email) REFERENCES customer(customer_email)
 		ON DELETE SET NULL,
     FOREIGN KEY (model, car_year) REFERENCES car_type(model, car_year),
@@ -108,9 +108,3 @@ CREATE TABLE sale (
 		ON DELETE SET NULL,
     PRIMARY KEY (sale_id)
 );
-
-ALTER TABLE `bmw_dealership_db`.`car_type` 
-CHANGE COLUMN `model` `model` VARCHAR(25) NOT NULL ;
-
-ALTER TABLE `bmw_dealership_db`.`new_inventory` 
-CHANGE COLUMN `model` `model` VARCHAR(25) NOT NULL ;
