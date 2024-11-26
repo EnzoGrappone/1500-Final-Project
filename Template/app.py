@@ -11,57 +11,64 @@ db_config = {
     'database': 'my_database'
 }
 
-@app.route('/search') def search():
-model = request.args.get('model')
-car_year = request.args.get('car_year')
-manufacturing_country = request.args.get(' manufacturing_country')
-msrp_min = request.args.get('msrp_min')
-msrp_max = request.args.get('msrp_max')
-query = "SELECT * FROM car_type WHERE 1=1"
-if model:
-     query += f" AND model LIKE '%{model}%'"
-if year:
-     query += f" AND car_year = {car_year}"
-if country:
-    query += f" AND manufacturing_country LIKE '%{ manufacturing_country}%'"
-if msrp_min:
-     query += f" AND msrp >= {msrp_min}"
-if msrp_max:
-    query += f" AND msrp <= {msrp_max}"
-try:
-    conn = mysql.connector.connect(**db_config)
-    cursor = conn.cursor()
-    cursor.execute(query)
-    rows = cursor.fetchall()
-    headers = [desc[0] for desc in cursor.description]
-    cursor.close()
-    conn.close()
+@app.route('/search')
+def search():
+    model = request.args.get('model')
+    car_year = request.args.get('car_year')
+    manufacturing_country = request.args.get(' manufacturing_country')
+    msrp_min = request.args.get('msrp_min')
+    msrp_max = request.args.get('msrp_max')
 
-    html_table = """
-    <table border="1">
-    <thead>
-    <tr>{}</tr>
-    </thead> <tbody>
-    {}
-    </tbody>
-    </table>
-    """.format(
-     "".join(f"<th>{col}</th>" for col in headers),
-     "".join(
-     "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
-     for row in rows
-     )
+    query = "SELECT * FROM car_type WHERE 1=1"
+    if model:
+        query += f" AND model LIKE '%{model}%'"
+    if car_year:
+        query += f" AND car_year = {car_year}"
+    if manufacturing_country:
+        query += f" AND manufacturing_country LIKE '%{ manufacturing_country}%'"
+    if msrp_min:
+        query += f" AND msrp >= {msrp_min}"
+    if msrp_max:
+        query += f" AND msrp <= {msrp_max}"
+
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        headers = [desc[0] for desc in cursor.description]
+        cursor.close()
+        conn.close()
+
+        html_table = """
+        <table border="1">
+            <thead>
+                <tr>{}</tr>
+            </thead>
+            <tbody>
+                {}
+            </tbody>
+        </table>
+        """.format(
+            "".join(f"<th>{col}</th>" for col in headers),
+            "".join(
+                "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
+                for row in rows
+            )
      )
      return render_template_string("""
      <html>
-      <body>
-      {{ table|safe }}
+     <body>
+        {{ table|safe }}
       </body>
       </html>
       """, table=html_table)
+
        except mysql.connector.Error as err:
            return f"Error: {err}"
-           if __name__ == '__main__': app.run(debug=True)
+
+           if __name__ == '__main__':
+               app.run(debug=True)
 
 
 
