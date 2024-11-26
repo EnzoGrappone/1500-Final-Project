@@ -5,10 +5,10 @@ app = Flask(__name__)
 
 # Database configuration
 db_config = {
-    'host': 'localhost',
+    'host': '127.0.0.1:3306',
     'user': 'root',
-    'password': '',  # Your MySQL password
-    'database': 'my_database'
+    'password': 'admin',  # Your MySQL password
+    'database': 'bmw_dealership_db'
 }
 
 #customer car searching method
