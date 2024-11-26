@@ -2,7 +2,7 @@ CREATE DATABASE
 BMW_dealership_DB;
 USE BMW_dealership_DB;
 CREATE TABLE car_type (
-	model VARCHAR(15),
+	model VARCHAR(25),
     car_year YEAR,
     manufacturing_country VARCHAR(25),
 	msrp INT,
@@ -108,3 +108,9 @@ CREATE TABLE sale (
 		ON DELETE SET NULL,
     PRIMARY KEY (sale_id)
 );
+
+ALTER TABLE `bmw_dealership_db`.`car_type` 
+CHANGE COLUMN `model` `model` VARCHAR(25) NOT NULL ;
+
+ALTER TABLE `bmw_dealership_db`.`new_inventory` 
+CHANGE COLUMN `model` `model` VARCHAR(25) NOT NULL ;
