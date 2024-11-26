@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string
+from flask import Flask, request, render_template_string
 import mysql.connector
 
 app = Flask(__name__)
@@ -10,6 +10,64 @@ db_config = {
     'password': '',  # Your MySQL password
     'database': 'my_database'
 }
+
+@app.route('/search') def search():
+model = request.args.get('model')
+car_year = request.args.get('car_year')
+manufacturing_country = request.args.get(' manufacturing_country')
+msrp_min = request.args.get('msrp_min')
+msrp_max = request.args.get('msrp_max')
+# Build the query based on input
+query = "SELECT * FROM car_type WHERE 1=1"
+if model:
+     query += f" AND model LIKE '%{model}%'"
+if year:
+     query += f" AND car_year = {car_year}"
+if country:
+    query += f" AND manufacturing_country LIKE '%{ manufacturing_country}%'"
+if msrp_min:
+     query += f" AND msrp >= {msrp_min}"
+if msrp_max:
+    query += f" AND msrp <= {msrp_max}"
+try:
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    headers = [desc[0] for desc in cursor.description]
+    cursor.close()
+    conn.close()
+
+    html_table = """
+    <table border="1">
+    <thead>
+    <tr>{}</tr>
+    </thead> <tbody>
+    {}
+    </tbody>
+    </table>
+    """.format(
+     "".join(f"<th>{col}</th>" for col in headers),
+     "".join(
+     "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
+     for row in rows
+     )
+     )
+     return render_template_string("""
+     <html>
+      <body>
+      {{ table|safe }}
+      </body>
+      </html>
+      """, table=html_table)
+       except mysql.connector.Error as err:
+           return f"Error: {err}"
+           if __name__ == '__main__': app.run(debug=True)
+
+
+
+
+
 
 @app.route('/fetch-table')
 def fetch_table():
@@ -23,7 +81,7 @@ def fetch_table():
         headers = [desc[0] for desc in cursor.description]  # Get column names
         cursor.close()
         conn.close()
-        
+
         # Render data as an HTML table
         html_table = """
         <table border="1">
@@ -45,7 +103,7 @@ def fetch_table():
 
     except mysql.connector.Error as err:
         return f"Error: {err}"
-    
+
 def send_purchase():
     conn = mysql.connector.connect(**db_config)
     cursor = conn.cursor()
