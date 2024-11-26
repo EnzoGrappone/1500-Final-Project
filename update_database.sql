@@ -232,5 +232,29 @@ INSERT INTO service(service_id,customer_email,type_id,license_plate_number,color
 ,('SE14','matthew.anderson@gmail.com','T3','OYI-6151','Grey','State Inspection','2025-08-18','E11')
 ,('SE15','jessica.taylor@gmail.com','T22','REV-5153','Blue','State Inspection','2025-08-18','E11');
 
-
-
+INSERT INTO sale(sale_id,customer_email,vin,sale_date,sale_price,employee_id) VALUES
+ ('SA1','thomas.lawrance@gmail.com','1J4FA24117L197804','2024-9-2',73100,'E2')
+,('SA2','Jane.Donohue@gmail.com','1FTFW1ET7BFC86432','2024-9-2',61500,'E2')
+,('SA3','michael.lee@gmail.com','1B3ES56C85D129197','2024-9-4',60350,'E3')
+,('SA4','emily.davis@outlook.com','1GCRKTE71DZ213906','2024-9-10',110400,'E2')
+,('SA5','david.lawrance@gmail.com','4T4BF1FK3CR212265','2024-9-12',116300,'E4')
+,('SA6','sarah.wilson@gmail.com','WDBRF61J33F380547','2024-9-12',57500,'E3')
+,('SA7','daniel.martinez@gmail.com','1N4AA5AP0BC842113','2024-9-15',61200,'E3')
+,('SA8','jessica.taylor@gmail.com','4T1BE46K88U290594','2024-9-15',75700,'E4')
+,('SA9','matthew.anderson@gmail.com','3FADP4CJ3EM114092','2024-9-16',57500,'E5')
+,('SA10','ashley.thomas@gmail.com','1FALP6246VH105040','2024-9-29',75700,'E1')
+,('SA11','christopher.gao@gmail.com','KL4CJASB3EB718341','2024-10-1',95300,'E4')
+,('SA12','amanda.clark@outlook.com','1GCCT19X138174045','2024-10-2',57500,'E1')
+,('SA13','joshua.hernandez@gmail.com','2D8GV572X6H147601','2024-10-10',75700,'E5')
+,('SA14','brittany.robinson@icloud.com','1N4AL21E07N415727','2024-10-12',134800,'E4')
+,('SA15','ethan.lewis@gmail.com','JF2SJAFC8FH415656','2024-10-12',57500,'E3')
+,('SA16','samantha.walker@gmail.com','1G11C5SA5DF105742','2024-10-12',59500,'E3')
+,('SA17','brandon.king@outlook.com','3GTP2VE78DG306733','2024-10-12',120900,'E1')
+,('SA18','megan.hall@gmail.com','JNKCV54E67M945621','2024-10-15',59500,'E4')
+,('SA19','andrew.scott@gmail.com','1HGCP2F30CA016205','2024-10-16',89100,'E5')
+,('SA20','jennifer.young@gmail.com','3GCUKRECXEG218078','2024-10-17',94100,'E4')
+,('SA21','ryan.falcone@gmail.com','1FTRW08L92KC72610','2024-10-17',70500,'E1')
+,('SA22','elizabeth.adams@gmail.com','3C6JR6AT1EG188687','2024-10-18',94100,'E5')
+,('SA23','joseph.baker@outlook.com','2B6KB31Z1SK571813','2024-10-18',120900,'E4')
+,('SA24','lauren.berry@gmail.com','WDDKK5KF8CF178411','2024-10-19',82900,'E1')
+,('SA25','tyler.harris@outlook.com','1G2ZM587074152345','2024-10-28',68700,'E1');

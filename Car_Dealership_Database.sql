@@ -95,7 +95,7 @@ CREATE TABLE service (
 );
 
 CREATE TABLE sale (
-	sale_id INT,
+	sale_id VARCHAR(5),
     customer_email VARCHAR(256),
     vin CHAR(17),
     sale_date DATE,
