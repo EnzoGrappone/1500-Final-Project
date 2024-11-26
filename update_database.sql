@@ -95,7 +95,6 @@ INSERT INTO new_inventory(vin,model,color,car_year) VALUES
 ,('1FTPX14538FB26125','Z4 M40i','Silver',2024);
 
 
-
 INSERT INTO used_inventory(vin,brand,model,car_year,color,mileage,car_condition,warranty_status,price) VALUES
  ('JH4CU2F68DC012523','Audi','A6',2017,'Silver',90003,'Good','0 Year',25800)
 ,('1GKFK63867J255396','Alfa Romeo','Giulia',2019,'red',20010,'Good','0 Year',35000)
