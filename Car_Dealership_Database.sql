@@ -86,7 +86,7 @@ CREATE TABLE service (
     service_type VARCHAR(25),
     appointment_date DATE,
     employee_id VARCHAR(3),
-    FOREIGN KEY (customer_email) REFERENCES customer(customer_email)
+    FOREIGN KEY (customer_email) REFERENCES cust_contact(customer_email)
 		ON DELETE SET NULL,
     FOREIGN KEY (type_id) REFERENCES car_type(type_id),
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
