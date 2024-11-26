@@ -195,7 +195,7 @@ INSERT INTO emp_info(email,phone_number,address,DOB,salary) VALUES
 ,('audrey.cooper@gmail.com',13224567891,'1017 Laurel Avenue Minneapolis MN 55401','1997-03-25',60000)
 ,('samuel.grant@gmail.com',14525678902,'2258 Sycamore Road Portland OR 97201','1989-06-10',75000);
 
-INSERT INTO service(service_id,customer_email,model,liscense_plate_number,color,service_type,appointment_date,employee_id,year) VALUES
+INSERT INTO service(service_id,customer_email,model,license_plate_number,color,service_type,appointment_date,employee_id,car_year) VALUES
  ('SE1','david.lawrance@gmail.com','850i','NUW-3445','Orange','Oil & Filter Change','2024-12-18','E10',2023)
 ,('SE2','amanda.clark@outlook.com','330i','HTC-5787','Blue','Maintenance','2024-12-18','E12',2024)
 ,('SE3','tyler.harris@outlook.com','430i Convertible','ECY-1212','Red','Maintenance','2024-12-18','E10',2024)

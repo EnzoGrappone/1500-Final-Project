@@ -65,7 +65,7 @@ CREATE TABLE emp_info (
 );
 
 CREATE TABLE employee (
-	employee_id INT,
+	employee_id VARCHAR(3),
     first_name VARCHAR(25),
     last_name VARCHAR(25),
     department_id VARCHAR(2),
@@ -78,14 +78,14 @@ CREATE TABLE employee (
 );
 
 CREATE TABLE service (
-	service_id INT,
+	service_id VARCHAR(10),
     customer_email VARCHAR(256),
     model VARCHAR(15),
     license_plate_number VARCHAR(10),
     color VARCHAR(15),
     service_type VARCHAR(25),
     appointment_date DATE,
-    employee_id INT,
+    employee_id VARCHAR(3),
     car_year YEAR,
     FOREIGN KEY (customer_email) REFERENCES customer(customer_email)
 		ON DELETE SET NULL,
@@ -101,7 +101,7 @@ CREATE TABLE sale (
     vin CHAR(17),
     sale_date DATE,
     sale_price INT,
-    employee_id INT,
+    employee_id VARCHAR(3),
     FOREIGN KEY (customer_email) REFERENCES customer(customer_email)
 		ON DELETE SET NULL,
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
