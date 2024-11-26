@@ -17,7 +17,6 @@ car_year = request.args.get('car_year')
 manufacturing_country = request.args.get(' manufacturing_country')
 msrp_min = request.args.get('msrp_min')
 msrp_max = request.args.get('msrp_max')
-# Build the query based on input
 query = "SELECT * FROM car_type WHERE 1=1"
 if model:
      query += f" AND model LIKE '%{model}%'"
