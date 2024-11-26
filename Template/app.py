@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # Database configuration
 db_config = {
-    'host': '127.0.0.1:3306',
+    'host': '127.0.0.1',
     'user': 'root',
     'password': 'admin',  # Your MySQL password
     'database': 'bmw_dealership_db'
@@ -13,8 +13,8 @@ db_config = {
 
 #customer car searching method
 
-@app.route('/search')
-def search():
+@app.route('/car_search')
+def car_search():
     # Get user inputs
     model = request.args.get('model')
     car_year = request.args.get('car_year')
