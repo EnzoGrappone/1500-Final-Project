@@ -13,8 +13,9 @@ CREATE TABLE new_inventory (
 	vin CHAR(17),
     model VARCHAR(15),
     color VARCHAR(15),
+    car_year YEAR,
     PRIMARY KEY (vin),
-    FOREIGN KEY (model) REFERENCES car_type(model)
+    FOREIGN KEY (model, car_year) REFERENCES car_type(model, car_year)
 );
 
 CREATE TABLE used_inventory (
@@ -85,9 +86,10 @@ CREATE TABLE service (
     service_type VARCHAR(25),
     appointment_date DATE,
     employee_id INT,
+    car_year YEAR,
     FOREIGN KEY (customer_email) REFERENCES customer(customer_email)
 		ON DELETE SET NULL,
-    FOREIGN KEY (model) REFERENCES car_type(model),
+    FOREIGN KEY (model, car_year) REFERENCES car_type(model, car_year),
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
 		ON DELETE SET NULL,
     PRIMARY KEY (service_id)
