@@ -95,7 +95,7 @@ def car_search():
             <h2>Search Results</h2>
             {{ table|safe }}
             <br>
-            <a href="/car_search">Back to Search</a>
+            <a href="{{ url_for('find_car') }}">Back to Search</a>
         </body>
         </html>
         """, table=html_table)
