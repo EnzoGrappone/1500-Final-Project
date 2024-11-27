@@ -258,3 +258,171 @@ INSERT INTO sale(sale_id,customer_email,vin,sale_date,sale_price,employee_id) VA
 ,('SA23','joseph.baker@outlook.com','2B6KB31Z1SK571813','2024-10-18',120900,'E4')
 ,('SA24','lauren.berry@gmail.com','WDDKK5KF8CF178411','2024-10-19',82900,'E1')
 ,('SA25','tyler.harris@outlook.com','1G2ZM587074152345','2024-10-28',68700,'E1');
+
+ALTER TABLE cust_contact ADD password VARCHAR(20);
+
+UPDATE cust_contact
+SET password = 'P@ssword123!'
+WHERE customer_email = 'thomas.lawrance@gmail.com';
+
+UPDATE cust_contact
+SET password = 'SecureP@ssw0rd!'
+WHERE customer_email = 'Jane.Donohue@gmail.com';
+
+UPDATE cust_contact
+SET password = 'MyP@ssw0rd42'
+WHERE customer_email = 'michael.lee@gmail.com';
+
+UPDATE cust_contact
+SET password = 'Passw0rd#Safe'
+WHERE customer_email = 'emily.davis@outlook.com';
+
+UPDATE cust_contact
+SET password = 'Str0ngPass!'
+WHERE customer_email = 'david.lawrance@gmail.com';
+
+UPDATE cust_contact
+SET password = 'P@ssMeN0w!'
+WHERE customer_email = 'sarah.wilson@gmail.com';
+
+UPDATE cust_contact
+SET password = 'KeepIt$afe!'
+WHERE customer_email = 'daniel.martinez@gmail.com';
+
+UPDATE cust_contact
+SET password = 'N0tSoE@sy1'
+WHERE customer_email = 'jessica.taylor@gmail.com';
+
+UPDATE cust_contact
+SET password = 'EasyP@ss123'
+WHERE customer_email = 'matthew.anderson@gmail.com';
+
+UPDATE cust_contact
+SET password = 'Pr0tectM3!'
+WHERE customer_email = 'ashley.thomas@gmail.com';
+
+UPDATE cust_contact
+SET password = 'SecureMe#42'
+WHERE customer_email = 'christopher.gao@gmail.com';
+
+UPDATE cust_contact
+SET password = 'SaveMyP@ss!'
+WHERE customer_email = 'amanda.clark@outlook.com';
+
+UPDATE cust_contact
+SET password = 'L3tMeIn@123'
+WHERE customer_email = 'joshua.hernandez@gmail.com';
+
+UPDATE cust_contact
+SET password = 'Acc3ssM3Now!'
+WHERE customer_email = 'brittany.robinson@icloud.com';
+
+UPDATE cust_contact
+SET password = 'P@ssW0rthy!'
+WHERE customer_email = 'ethan.lewis@gmail.com';
+
+UPDATE cust_contact
+SET password = 'UnCr@ckable1'
+WHERE customer_email = 'samantha.walker@gmail.com';
+
+UPDATE cust_contact
+SET password = 'S@feGuard42'
+WHERE customer_email = 'brandon.king@outlook.com';
+
+UPDATE cust_contact
+SET password = 'VaultMe@#1'
+WHERE customer_email = 'megan.hall@gmail.com';
+
+UPDATE cust_contact
+SET password = 'MyS3cur3Key'
+WHERE customer_email = 'andrew.scott@gmail.com';
+
+UPDATE cust_contact
+SET password = 'E@syT0R3m3mber'
+WHERE customer_email = 'jennifer.young@gmail.com';
+
+UPDATE cust_contact
+SET password = 'P@ssSafety1'
+WHERE customer_email = 'ryan.falcone@gmail.com';
+
+UPDATE cust_contact
+SET password = 'H1d3MyK3y!'
+WHERE customer_email = 'elizabeth.adams@gmail.com';
+
+UPDATE cust_contact
+SET password = 'M3morableP@ss!'
+WHERE customer_email = 'joseph.baker@outlook.com';
+
+UPDATE cust_contact
+SET password = 'Sh@rpM3mory!'
+WHERE customer_email = 'lauren.berry@gmail.com';
+
+UPDATE cust_contact
+SET password = 'TightK3y@123'
+WHERE customer_email = 'tyler.harris@outlook.com';
+
+ALTER TABLE emp_info ADD password VARCHAR(20);
+
+UPDATE emp_info
+SET password = 'T0p$3cur3'
+WHERE email = 'DB@gmail.com';
+
+UPDATE emp_info
+SET password = 'P@ssW0rd87'
+WHERE email = 'ava.mitchell@hotmail.com';
+
+UPDATE emp_info
+SET password = 'P@rk3rKey!'
+WHERE email = 'noah.parker@gmail.com';
+
+UPDATE emp_info
+SET password = 'H@rris0n$'
+WHERE email = 'olivia.harrison@gmail.com';
+
+UPDATE emp_info
+SET password = 'T3rn0ver!'
+WHERE email = 'liam.turner@gmail.com';
+
+UPDATE emp_info
+SET password = 'E!mm4S@fe'
+WHERE email = 'emma.brooks@gmail.com';
+
+UPDATE emp_info
+SET password = 'M0rg@n123'
+WHERE email = 'sophia.morgan@gmail.com';
+
+UPDATE emp_info
+SET password = 'L0ck$M3N'
+WHERE email = 'lucas.bennett@gmail.com';
+
+UPDATE emp_info
+SET password = 'W@lker$afe'
+WHERE email = 'amelia.walker@gmail.com';
+
+UPDATE emp_info
+SET password = 'R3edR0ad!'
+WHERE email = 'ethan.reed@gmail.com';
+
+UPDATE emp_info
+SET password = 'F0st3r@Key'
+WHERE email = 'harper.foster@gmail.com';
+
+UPDATE emp_info
+SET password = 'Hug3s#123'
+WHERE email = 'jackson.hughes@gmail.com';
+
+UPDATE emp_info
+SET password = 'C@rt3r$afe'
+WHERE email = 'henry.carter@gmail.com';
+
+UPDATE emp_info
+SET password = 'R!chards3c'
+WHERE email = 'mia.richardson@gmail.com';
+
+UPDATE emp_info
+SET password = 'C0operK3y'
+WHERE email = 'audrey.cooper@gmail.com';
+
+UPDATE emp_info
+SET password = 'Gr@nt@cess'
+WHERE email = 'samuel.grant@gmail.com';
