@@ -3,6 +3,9 @@ import mysql.connector
 
 app = Flask(__name__)
 
+@app.route('/')
+def home():
+    return render_template('index.html')
 @app.route('/home1')
 def home1():
     return render_template('index.html')
@@ -28,19 +31,19 @@ def stock():
     return render_template('Stock.html')
 
 @app.route('/findcustomer')
-def find_customer();
+def find_customer():
     return render_template('findcustomer.html')
 
 @app.route('/findservice')
-def find_service();
+def find_service():
     return render_template('findservice.html')
 
 @app.route('/home2')
-def home2();
+def home2():
     return render_template('index2.html')
 
 @app.route('/findsale')
-def find_sale();
+def find_sale():
     return render_template('findsale.html')
 
 # Database configuration
