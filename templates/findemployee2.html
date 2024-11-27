@@ -41,9 +41,10 @@
   </div>
   <div class="newtext">
 
-    <h3><form action="/results.html" method="post">
+    <h3><form method="GET" action="{{ url_for('employee_contact') }}" >
 
-        <textarea name="query" rows="5" cols="80" placeholder="Search.." name="search"></textarea><br></h3>
+        <label for="e_name">Employee Name</label>
+        <input type="text" name="e_name" id="e_name"><br>
         <h3><input type="submit" value="Find"></h3>
     </form>
   </div>

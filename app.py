@@ -19,11 +19,10 @@ def purchase_car():
 def find_employee():
     return render_template('findemployee2.html')
 
-
 # Database configuration
 db_config = {
     'host': '127.0.0.1',
-    'user': 'root', # Your MySQL username
+    'user': 'root',  # Your MySQL username
     'password': 'admin',  # Your MySQL password
     'database': 'bmw_dealership_db'
 }
@@ -107,5 +106,69 @@ def car_search():
         cursor.close()
         conn.close()
 
+@app.route('/employee_contact', methods=['GET', 'POST'])
+def employee_contact():
+    # Get the search term (either first name or last name)
+    search_term = request.args.get('search_term')
+
+    # Base SQL query to search employees by first or last name
+    query = "SELECT first_name, last_name, email FROM emp_info WHERE 1=1"
+    params = []
+
+    # Add conditions to the query based on the search term
+    if search_term:
+        query += " AND (first_name LIKE %s OR last_name LIKE %s)"
+        params.append(f"%{search_term}%")
+        params.append(f"%{search_term}%")
+
+    try:
+        # Database connection
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute(query, params)  # Execute the parameterized query
+        rows = cursor.fetchall()
+        headers = ['First Name', 'Last Name', 'Email']
+
+        # If results are found, build HTML table
+        if rows:
+            html_table = """
+            <table border="1">
+                <thead>
+                    <tr>{}</tr>
+                </thead>
+                <tbody>
+                    {}
+                </tbody>
+            </table>
+            """.format(
+                "".join(f"<th>{col}</th>" for col in headers),
+                "".join(
+                    "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
+                    for row in rows
+                )
+            )
+        else:
+            html_table = "<p>No employees found.</p>"
+
+        # Return rendered HTML with the employee search results
+        return render_template_string("""
+        <html>
+        <body>
+            <h2>Employee Search Results</h2>
+            {{ table|safe }}
+            <br>
+            <a href="{{ url_for('find_employee') }}">Back to Search</a>
+        </body>
+        </html>
+        """, table=html_table)
+
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# Only one app.run() needed, here at the bottom.
 if __name__ == '__main__':
     app.run(debug=True)
