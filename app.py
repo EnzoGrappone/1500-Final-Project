@@ -23,7 +23,7 @@ def find_employee():
 # Database configuration
 db_config = {
     'host': '127.0.0.1',
-    'user': 'root',
+    'user': 'root', # Your MySQL username
     'password': 'admin',  # Your MySQL password
     'database': 'bmw_dealership_db'
 }
