@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="style_1.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/style_1.css') }}">
 
     <title>BMW Pittsburgh Login</title>
     <style>
@@ -64,9 +64,9 @@
             const defaultStaffPassword = 'staffPass123';
 
             if (userType === 'staff' && username === defaultStaffUsername && password === defaultStaffPassword) {
-                window.location.href = 'index2.html';
+                window.location.href = '{ url_for('home2') }}';
             } else if (userType === 'customer') {
-                window.location.href = 'index.html';
+                window.location.href = '{ url_for('home1') }}';
             } else {
                 alert('Invalid credentials for staff user.');
             }
