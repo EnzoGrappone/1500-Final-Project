@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="Style_5.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/Style_5.css') }}">
     <title>SQL Query Executor</title>
     <script> function checkPasscode()
     { var passcode = prompt("Enter passcode:");
@@ -18,7 +18,7 @@
 </head>
 <body>
   <div class="column">
-  <img src="BMW-Logo.png" alt="A picture of BMW logo" style="width:7%; max-height:7%">
+  <img src="{{ url_for('static', filename='/BMW-Logo.png') }}" alt="A picture of BMW logo" style="width:7%; max-height:7%">
   <p>BMW Pittsburgh</p>
 
   <div class="dropdown">

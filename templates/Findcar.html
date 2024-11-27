@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="Style_2.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/Style_2.css') }}">
     <title>Find a Car</title>
 </head>
 <body>
     <div class="column">
-        <img src="BMW-Logo.png" alt="A picture of BMW logo" style="width:7%; max-height:7%">
+        <img src="{{ url_for('static', filename='/BMW-Logo.png') }}" alt="A picture of BMW logo" style="width:7%; max-height:7%">
         <p>BMW Pittsburgh</p>
 
         <div class="dropdown">
