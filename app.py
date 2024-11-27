@@ -136,29 +136,28 @@ def car_search():
 
 @app.route('/employee_contact', methods=['GET', 'POST'])
 def employee_contact():
-    # Get the search term (either first name or last name)
-    search_term = request.args.get('search_term')
+    # Get user input from the form
+    search_entry = request.args.get('e_name')
 
-    # Base SQL query to search employees by first or last name
-    query = "SELECT first_name, last_name, email FROM emp_info WHERE 1=1"
+    # Base SQL query
+    query = " SELECT CONCAT(first_name, ' ', last_name) AS Name, employee.email AS Email, emp_info.phone_number AS Phone, department.department_name AS Department FROM employee JOIN emp_info ON emp_info.email = employee.email JOIN department ON employee.department_id = department.department_id"
     params = []
 
-    # Add conditions to the query based on the search term
-    if search_term:
-        query += " AND (first_name LIKE %s OR last_name LIKE %s)"
-        params.append(f"%{search_term}%")
-        params.append(f"%{search_term}%")
+    # Add conditions based on user input
+    if search_entry:
+        query += " AND (first_name LIKE '" + search_entry + "' OR last_name LIKE '" + search_entry + "' OR CONCAT(first_name, ' ', last_name) LIKE '" + search_entry + "')"
 
     try:
         # Database connection
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-        cursor.execute(query, params)  # Execute the parameterized query
+        cursor.execute(query, params)  # Use parameterized query
         rows = cursor.fetchall()
-        headers = ['First Name', 'Last Name', 'Email']
+        headers = [desc[0] for desc in cursor.description]
 
-        # If results are found, build HTML table
+        # Handle empty results
         if rows:
+            # Build HTML table
             html_table = """
             <table border="1">
                 <thead>
@@ -176,13 +175,13 @@ def employee_contact():
                 )
             )
         else:
-            html_table = "<p>No employees found.</p>"
+            html_table = "<p>No results found.</p>"
 
-        # Return rendered HTML with the employee search results
+        # Return rendered HTML
         return render_template_string("""
         <html>
         <body>
-            <h2>Employee Search Results</h2>
+            <h2>Employee Contact Results</h2>
             {{ table|safe }}
             <br>
             <a href="{{ url_for('find_employee') }}">Back to Search</a>
