@@ -19,6 +19,10 @@ def purchase_car():
 def find_employee():
     return render_template('findemployee2.html')
 
+@app.route('/stock')
+def stock():
+    return render_template('Stock.html')
+
 # Database configuration
 db_config = {
     'host': '127.0.0.1',
