@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="Style_2.css">
+    <title>SQL Query Executor</title>
+    <script> function checkPasscode()
+    { var passcode = prompt("Enter passcode:");
+    if (passcode === "1234") {
+      document.getElementById("employeeDropdown").style.display = "block";
+    }
+    else {
+       alert("Incorrect passcode. Access denied.");
+     }
+   }
+ </script>
+</head>
+<body>
+  <div class="column">
+  <img src="BMW-Logo.png" alt="A picture of BMW logo" style="width:7%; max-height:7%">
+  <p>BMW Pittsburgh</p>
+
+  <div class="dropdown">
+  <button class="dropb">Customer</button>
+  <div class="dropdown-content">
+    <a href="index.html">Main</a>
+    <a href="findcar.html">Find a car</a>
+    <a href="purchasecar.html">Purchase a car</a>
+    <a href="findemployee2.html">Contact us</a>
+
+  </div>
+</div>
+
+
+
+
+</div>
+
+  <div class="newtext">
+    <h2>What car you looking for today?</h2>
+  </div>
+  <div class="newtext"> <form method="GET" action="/search">
+     <h2><label for="model">Model:</label>
+     <input type="text" name="model" id="model"><br>
+     <label for="year">Year:</label>
+      <input type="number" name="year" id="year"><br>
+      <label for="country">Manufacturing Country:</label>
+      <input type="text" name="country" id="country"><br>
+      <label for="msrp_min">MSRP Min:</label>
+      <input type="number" name="msrp_min" id="msrp_min"><br>
+      <label for="msrp_max">MSRP Max:</label>
+      <input type="number" name="msrp_max" id="msrp_max"><br>
+      <button type="submit">Search</button> </form> </div>
+    </h2>
+
+  <div class="new2text">
+  	<p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
+  </div>
+
+</body>
+</html>

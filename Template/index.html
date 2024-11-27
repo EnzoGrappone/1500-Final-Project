@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/Style_3.css') }}">
+    <link rel="stylesheet" type="text/css" href="style_1.css">
     <title>SQL Query Executor</title>
     <script> function checkPasscode()
     { var passcode = prompt("Enter passcode:");
@@ -18,36 +18,40 @@
 </head>
 <body>
   <div class="column">
-  <img src="{{ url_for('static', filename='/BMW-Logo.png') }}" alt="A picture of BMW logo" style="width:7%; max-height:7%">
+  <img src="BMW-Logo.png" alt="A picture of BMW logo" style="width:7%; max-height:7%">
   <p>BMW Pittsburgh</p>
-
-
 
   <div class="dropdown">
   <button class="dropb">Customer</button>
   <div class="dropdown-content">
-    <a href="{{ url_for('home1') }}">Main</a>
-    <a href="{{ url_for('find_car') }}">Find a car</a>
-    <a href="{{ url_for('purchase_car') }}">Purchase a car</a>
-    <a href="{{ url_for('find_employee2') }}">Contact us</a>
+    <a href="index.html">Main</a>
+    <a href="findcar.html">Find a car</a>
+    <a href="purchasecar.html">Purchase a car</a>
+    <a href="findemployee2.html">Contact us</a>
 
   </div>
-  </div>
+</div>
+
+
+<!-- onclick="fetchTable()" you can run this on click to fetch a table with the associated query -->
+
+
 
 </div>
 
   <div class="newtext">
-    <h2>Who are you looking for today?</h2>
+    <h2>Welcome! Please use the dropdown box on the top left to navigate.</h2>
   </div>
   <div class="newtext">
 
-    <h3><form method="GET" action="{{ url_for('employee_contact') }}" >
-
-        <label for="e_name">Employee Name</label>
-        <input type="text" name="e_name" id="e_name"><br>
-        <h3><input type="submit" value="Find"></h3>
-    </form>
+    <h3>The Ultimate Driving Machine.</h3>
   </div>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+
 
   <div class="new2text">
   	<p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
