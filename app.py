@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, render_template_string
 import mysql.connector
 
 app = Flask(__name__)
@@ -18,6 +18,7 @@ def purchase_car():
 @app.route('/findemployee2')
 def find_employee():
     return render_template('findemployee2.html')
+
 
 # Database configuration
 db_config = {
