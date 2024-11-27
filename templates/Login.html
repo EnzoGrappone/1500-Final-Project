@@ -64,9 +64,9 @@
             const defaultStaffPassword = 'staffPass123';
 
             if (userType === 'staff' && username === defaultStaffUsername && password === defaultStaffPassword) {
-                window.location.href = '{ url_for('home2') }}';
+                window.location.href = '{{ url_for('home2') }}';
             } else if (userType === 'customer') {
-                window.location.href = '{ url_for('home1') }}';
+                window.location.href = '{{ url_for('home1') }}';
             } else {
                 alert('Invalid credentials for staff user.');
             }
