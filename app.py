@@ -125,25 +125,16 @@ def car_inventory():
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
-        # Print the type_id for debugging
-        print(f"Searching for cars with type_id: {type_id}")
-
-        # Query new_inventory for cars matching the type_id
+        # Query to get car details from new_inventory joined with car_type
         query = """
-        SELECT ni.*, ct.type_id 
+        SELECT ni.*, ct.model, ct.manufacturing_country 
         FROM new_inventory ni
         JOIN car_type ct ON ni.type_id = ct.type_id 
         WHERE ct.type_id = %s
         """
-        
-        # Print the query to debug
-        print(f"Executing query: {query}")
-        
+
         cursor.execute(query, (type_id,))
         rows = cursor.fetchall()
-
-        # Print the rows to check if the data is returned
-        print(f"Rows returned: {rows}")
 
         if rows:
             # Build HTML table for displaying results
@@ -152,10 +143,10 @@ def car_inventory():
                 <thead>
                     <tr>
                         <th>Car ID</th>
+                        <th>Vin</th>
+                        <th>Color</th>
                         <th>Model</th>
-                        <th>Year</th>
-                        <th>Price</th>
-                        <th>Condition</th>
+                        <th>Manufacturing Country</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -175,7 +166,7 @@ def car_inventory():
         return render_template_string("""
         <html>
         <body>
-            <h2>Car Inventory</h2>
+            <h2>Available Cars</h2>
             {{ table|safe }}
             <br>
             <a href="{{ url_for('find_car') }}">Back to Search</a>
@@ -189,10 +180,6 @@ def car_inventory():
     finally:
         cursor.close()
         conn.close()
-
-
-
-
 
 
 
