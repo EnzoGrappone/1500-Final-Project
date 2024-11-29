@@ -51,33 +51,11 @@
             background-color: #005cbf;
         }
     </style>
-
-    <script>
-        function handleLogin(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const userType = document.getElementById('user-type').value;
-            const defaultStaffUsername = 'staffUser';
-            const defaultStaffPassword = 'staffPass123';
-
-            // Make sure the Jinja2 is properly rendered as a string in JavaScript
-            if (userType === 'staff' && username === defaultStaffUsername && password === defaultStaffPassword) {
-                window.location.href = "{{ url_for('home2') }}";  // URL for staff
-            } else if (userType === 'customer') {
-                window.location.href = "{{ url_for('home1') }}";  // URL for customer
-            } else {
-                alert('Invalid credentials for staff user.');
-            }
-        }
-    </script>
 </head>
 <body>
     <div class="login-container">
-        <h2>Welcome!</h2>
-
-        <h2>BMW Pittsburgh Login</h2>
-        <form onsubmit="handleLogin(event)">
+        <h2>Welcome to BMW Pittsburgh</h2>
+        <form action="{{ url_for('login') }}" method="POST">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
 
@@ -85,13 +63,19 @@
             <input type="password" id="password" name="password" required>
 
             <label for="user-type">I am a:</label>
-            <select id="user-type" name="user_type" required>
-                <option value="customer">Customer</option>
-                <option value="staff">Staff</option>
+            <select id="user-type" name="user-type" required>
+                <option value="Customer">Customer</option>
+                <option value="Employee">Employee</option>
             </select>
 
             <button type="submit">Login</button>
         </form>
+        
+        {% if error %}
+        <script>
+            alert("{{ error }}");
+        </script>
+        {% endif %}
     </div>
 </body>
 </html>
