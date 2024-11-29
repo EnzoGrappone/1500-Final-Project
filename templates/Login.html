@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/style_1.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_1.css') }}">
 
     <title>BMW Pittsburgh Login</title>
     <style>
@@ -21,12 +21,9 @@
             padding: 80px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-
         }
         .login-container h2 {
             margin-bottom: 20px;
-
-
         }
         .login-container label {
             display: block;
@@ -54,6 +51,7 @@
             background-color: #005cbf;
         }
     </style>
+
     <script>
         function handleLogin(event) {
             event.preventDefault();
@@ -63,10 +61,11 @@
             const defaultStaffUsername = 'staffUser';
             const defaultStaffPassword = 'staffPass123';
 
+            // Make sure the Jinja2 is properly rendered as a string in JavaScript
             if (userType === 'staff' && username === defaultStaffUsername && password === defaultStaffPassword) {
-                window.location.href = '{{ url_for('home2') }}';
+                window.location.href = "{{ url_for('home2') }}";  // URL for staff
             } else if (userType === 'customer') {
-                window.location.href = '{{ url_for('home1') }}';
+                window.location.href = "{{ url_for('home1') }}";  // URL for customer
             } else {
                 alert('Invalid credentials for staff user.');
             }
