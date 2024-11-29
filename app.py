@@ -238,7 +238,7 @@ def employee_contact():
             <h2>Employee Contact Results</h2>
             {{ table|safe }}
             <br>
-            <a href="{{ url_for('find_employee') }}">Back to Search</a>
+            <a href="{{ url_for('find_employee2') }}">Back to Search</a>
         </body>
         </html>
         """, table=html_table)
