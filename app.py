@@ -55,71 +55,127 @@ db_config = {
     'database': 'bmw_dealership_db'
 }
 
+# retrieves a table of the cars that the user searched for
 @app.route('/car_search', methods=['GET', 'POST'])
 def car_search():
-    # Get user inputs from the form
-    model = request.args.get('model')
-    car_year = request.args.get('car_year')
-    manufacturing_country = request.args.get('manufacturing_country')
-    msrp_min = request.args.get('msrp_min')
-    msrp_max = request.args.get('msrp_max')
+    model = request.values.get('model')
+    car_year = request.values.get('car_year')
+    manufacturing_country = request.values.get('manufacturing_country')
+    msrp_min = request.values.get('msrp_min')
+    msrp_max = request.values.get('msrp_max')
 
-    # Base SQL query
     query = "SELECT * FROM car_type WHERE 1=1"
     params = []
 
-    # Add conditions based on user input
     if model:
         query += " AND model LIKE %s"
         params.append(f"%{model}%")
-    if car_year and car_year.isdigit():  # Validate numeric input
+    if car_year and car_year.isdigit():
         query += " AND car_year = %s"
         params.append(car_year)
     if manufacturing_country:
         query += " AND manufacturing_country LIKE %s"
         params.append(f"%{manufacturing_country}%")
-    if msrp_min and msrp_min.isdigit():  # Validate numeric input
+    if msrp_min and msrp_min.isdigit():
         query += " AND msrp >= %s"
         params.append(msrp_min)
-    if msrp_max and msrp_max.isdigit():  # Validate numeric input
+    if msrp_max and msrp_max.isdigit():
         query += " AND msrp <= %s"
         params.append(msrp_max)
+
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        headers = [desc[0] for desc in cursor.description]
+
+        if rows:
+            return render_template(
+                'car_search_results.html',
+                headers=headers,
+                rows=rows
+            )
+        else:
+            return render_template(
+                'car_search_results.html',
+                headers=None,
+                rows=None,
+                message="No cars match your search criteria."
+            )
+
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+
+    finally:
+        cursor.close()
+        conn.close()
+
+#gets what cars are in the inventory for the customer
+@app.route('/car_inventory', methods=['GET'])
+def car_inventory():
+    # Get the type_id from the query parameter
+    type_id = request.args.get('type_id')
+
+    if not type_id:
+        return "No type_id provided", 400
 
     try:
         # Database connection
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-        cursor.execute(query, params)  # Use parameterized query
-        rows = cursor.fetchall()
-        headers = [desc[0] for desc in cursor.description]
 
-        # Handle empty results
+        # Print the type_id for debugging
+        print(f"Searching for cars with type_id: {type_id}")
+
+        # Query new_inventory for cars matching the type_id
+        query = """
+        SELECT ni.*, ct.type_id 
+        FROM new_inventory ni
+        JOIN car_type ct ON ni.type_id = ct.type_id 
+        WHERE ct.type_id = %s
+        """
+        
+        # Print the query to debug
+        print(f"Executing query: {query}")
+        
+        cursor.execute(query, (type_id,))
+        rows = cursor.fetchall()
+
+        # Print the rows to check if the data is returned
+        print(f"Rows returned: {rows}")
+
         if rows:
-            # Build HTML table
+            # Build HTML table for displaying results
             html_table = """
             <table border="1">
                 <thead>
-                    <tr>{}</tr>
+                    <tr>
+                        <th>Car ID</th>
+                        <th>Model</th>
+                        <th>Year</th>
+                        <th>Price</th>
+                        <th>Condition</th>
+                    </tr>
                 </thead>
                 <tbody>
                     {}
                 </tbody>
             </table>
             """.format(
-                "".join(f"<th>{col}</th>" for col in headers),
                 "".join(
                     "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
                     for row in rows
                 )
             )
         else:
-            html_table = "<p>No results found.</p>"
+            html_table = "<p>No inventory found for this car model.</p>"
 
-        # Return rendered HTML
+        # Return the table as part of the new page
         return render_template_string("""
         <html>
         <body>
-            <h2>Search Results</h2>
+            <h2>Car Inventory</h2>
             {{ table|safe }}
             <br>
             <a href="{{ url_for('find_car') }}">Back to Search</a>
@@ -134,67 +190,11 @@ def car_search():
         cursor.close()
         conn.close()
 
-@app.route('/employee_contact', methods=['GET', 'POST'])
-def employee_contact():
-    # Get user input from the form
-    search_entry = request.args.get('e_name')
 
-    # Base SQL query
-    query = " SELECT CONCAT(first_name, ' ', last_name) AS Name, employee.email AS Email, emp_info.phone_number AS Phone, department.department_name AS Department FROM employee JOIN emp_info ON emp_info.email = employee.email JOIN department ON employee.department_id = department.department_id"
-    params = []
 
-    # Add conditions based on user input
-    if search_entry:
-        query += " AND (first_name LIKE '" + search_entry + "' OR last_name LIKE '" + search_entry + "' OR CONCAT(first_name, ' ', last_name) LIKE '" + search_entry + "')"
 
-    try:
-        # Database connection
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-        cursor.execute(query, params)  # Use parameterized query
-        rows = cursor.fetchall()
-        headers = [desc[0] for desc in cursor.description]
 
-        # Handle empty results
-        if rows:
-            # Build HTML table
-            html_table = """
-            <table border="1">
-                <thead>
-                    <tr>{}</tr>
-                </thead>
-                <tbody>
-                    {}
-                </tbody>
-            </table>
-            """.format(
-                "".join(f"<th>{col}</th>" for col in headers),
-                "".join(
-                    "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
-                    for row in rows
-                )
-            )
-        else:
-            html_table = "<p>No results found.</p>"
 
-        # Return rendered HTML
-        return render_template_string("""
-        <html>
-        <body>
-            <h2>Employee Contact Results</h2>
-            {{ table|safe }}
-            <br>
-            <a href="{{ url_for('find_employee') }}">Back to Search</a>
-        </body>
-        </html>
-        """, table=html_table)
-
-    except mysql.connector.Error as err:
-        return f"Error: {err}"
-
-    finally:
-        cursor.close()
-        conn.close()
 
 # Only one app.run() needed, here at the bottom.
 if __name__ == '__main__':
