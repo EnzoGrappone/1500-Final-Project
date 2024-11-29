@@ -111,7 +111,7 @@ def car_search():
         cursor.close()
         conn.close()
 
-#gets what cars are in the inventory for the customer
+#when the customer clicks the button next to car_search results, they get a table of available cars from the new inventory
 @app.route('/car_inventory', methods=['GET'])
 def car_inventory():
     # Get the type_id from the query parameter
