@@ -3,6 +3,14 @@ import mysql.connector
 
 app = Flask(__name__)
 
+# Database configuration
+db_config = {
+    'host': '127.0.0.1',
+    'user': 'root',  # Your MySQL username
+    'password': 'admin',  # Your MySQL password
+    'database': 'bmw_dealership_db'
+}
+
 @app.route('/')
 def home():
     return render_template('Login.html')
@@ -43,17 +51,33 @@ def find_service():
 def home2():
     return render_template('index2.html')
 
-@app.route('/findsale')
+#retrieves the table of all the sales 
+@app.route('/find_sale', methods=['GET'])
 def find_sale():
-    return render_template('findsale.html')
+    try:
+        # Database connection
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
 
-# Database configuration
-db_config = {
-    'host': '127.0.0.1',
-    'user': 'root',  # Your MySQL username
-    'password': 'admin',  # Your MySQL password
-    'database': 'bmw_dealership_db'
-}
+        # Query to get all sales data from the sale table
+        query = "SELECT * FROM sale"
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        # Pass the results to the template
+        if rows:
+            # Send the rows as context to the 'findsale.html' template
+            return render_template('findsale.html', rows=rows)
+        else:
+            # If no results, pass an empty message to the template
+            return render_template('findsale.html', rows=None)
+
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+
+    finally:
+        cursor.close()
+        conn.close()
 
 # retrieves a table of the cars that the user searched for
 @app.route('/car_search', methods=['GET', 'POST'])
@@ -180,7 +204,6 @@ def car_inventory():
     finally:
         cursor.close()
         conn.close()
-
 
 
 # Only one app.run() needed, here at the bottom.
