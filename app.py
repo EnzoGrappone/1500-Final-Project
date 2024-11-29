@@ -188,6 +188,68 @@ def car_inventory():
         cursor.close()
         conn.close()
 
+@app.route('/employee_contact', methods=['GET', 'POST'])
+def employee_contact():
+    # Get user input from the form
+    search_entry = request.args.get('e_name')
+
+    # Base SQL query
+    query = " SELECT CONCAT(first_name, ' ', last_name) AS Name, employee.email AS Email, emp_info.phone_number AS Phone, department.department_name AS Department FROM employee JOIN emp_info ON emp_info.email = employee.email JOIN department ON employee.department_id = department.department_id"
+    params = []
+
+    # Add conditions based on user input
+    if search_entry:
+        query += " AND (first_name LIKE '" + search_entry + "' OR last_name LIKE '" + search_entry + "' OR CONCAT(first_name, ' ', last_name) LIKE '" + search_entry + "')"
+
+    try:
+        # Database connection
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute(query, params)  # Use parameterized query
+        rows = cursor.fetchall()
+        headers = [desc[0] for desc in cursor.description]
+
+        # Handle empty results
+        if rows:
+            # Build HTML table
+            html_table = """
+            <table border="1">
+                <thead>
+                    <tr>{}</tr>
+                </thead>
+                <tbody>
+                    {}
+                </tbody>
+            </table>
+            """.format(
+                "".join(f"<th>{col}</th>" for col in headers),
+                "".join(
+                    "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
+                    for row in rows
+                )
+            )
+        else:
+            html_table = "<p>No results found.</p>"
+
+        # Return rendered HTML
+        return render_template_string("""
+        <html>
+        <body>
+            <h2>Employee Contact Results</h2>
+            {{ table|safe }}
+            <br>
+            <a href="{{ url_for('find_employee') }}">Back to Search</a>
+        </body>
+        </html>
+        """, table=html_table)
+
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+
+    finally:
+        cursor.close()
+        conn.close()
+
 
 # Only one app.run() needed, here at the bottom.
 if __name__ == '__main__':
