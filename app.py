@@ -91,7 +91,7 @@ def sale_search():
     # Render results in the HTML template
     return render_template('findsale.html', sales=sales)
 
-    
+
 
 
 
@@ -175,9 +175,9 @@ def car_inventory():
 
         # Query to get car details from new_inventory joined with car_type
         query = """
-        SELECT ni.*, ct.model, ct.manufacturing_country 
+        SELECT ni.*, ct.model, ct.manufacturing_country
         FROM new_inventory ni
-        JOIN car_type ct ON ni.type_id = ct.type_id 
+        JOIN car_type ct ON ni.type_id = ct.type_id
         WHERE ct.type_id = %s
         """
 
@@ -187,7 +187,36 @@ def car_inventory():
         if rows:
             # Build HTML table for displaying results
             html_table = """
-            <table border="1">
+            <style>
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 1em;
+                font-family: Arial, sans-serif;
+                min-width: 400px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            }}
+            table thead tr {{
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+            }}
+                table th, table td {{
+                padding: 12px 15px;
+                border: 1px solid #dddddd;
+            }}
+            table tbody tr {{
+                border-bottom: 1px solid #dddddd;
+            }}
+            table tbody tr:nth-of-type(even) {{
+                background-color: #f3f3f3;
+            }}
+            table tbody tr:last-of-type {{
+                border-bottom: 2px solid #009879;
+            }}
+            </style>
+            <table>
                 <thead>
                     <tr>
                         <th>Car ID</th>
@@ -254,7 +283,36 @@ def employee_contact():
         if rows:
             # Build HTML table
             html_table = """
-            <table border="1">
+            <style>
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 1em;
+                font-family: Arial, sans-serif;
+                min-width: 400px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            }}
+            table thead tr {{
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+            }}
+                table th, table td {{
+                padding: 12px 15px;
+                border: 1px solid #dddddd;
+            }}
+            table tbody tr {{
+                border-bottom: 1px solid #dddddd;
+            }}
+            table tbody tr:nth-of-type(even) {{
+                background-color: #f3f3f3;
+            }}
+            table tbody tr:last-of-type {{
+                border-bottom: 2px solid #009879;
+            }}
+            </style>
+            <table>
                 <thead>
                     <tr>{}</tr>
                 </thead>
