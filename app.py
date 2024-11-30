@@ -7,6 +7,10 @@ app = Flask(__name__)
 def home():
     return render_template('Login.html')
 
+@app.route('/login')
+def login():
+    return render_template('Login.html')
+
 @app.route('/home1')
 def home1():
     return render_template('index.html')
@@ -52,6 +56,43 @@ def find_sale():
     conn.close()
 
     return render_template('findsale.html', sales=sales)
+
+@app.route('/sale_search', methods=['POST'])
+def sale_search():
+    sale_id = request.form.get('sale_id')
+    customer_email = request.form.get('customer_email')
+    sale_date = request.form.get('sale_date')
+    employee_id = request.form.get('employee_id')
+
+    # Build the query
+    query = "SELECT * FROM sale WHERE 1=1"
+    params = []
+
+    if sale_id:
+        query += " AND sale_id = %s"
+        params.append(sale_id)
+    if customer_email:
+        query += " AND customer_email = %s"
+        params.append(customer_email)
+    if sale_date:
+        query += " AND sale_date = %s"
+        params.append(sale_date)
+    if employee_id:
+        query += " AND employee_id = %s"
+        params.append(employee_id)
+
+    # Execute the query
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor()
+    cursor.execute(query, params)
+    sales = cursor.fetchall()
+    conn.close()
+
+    # Render results in the HTML template
+    return render_template('findsale.html', sales=sales)
+
+    
+
 
 
 # Database configuration
