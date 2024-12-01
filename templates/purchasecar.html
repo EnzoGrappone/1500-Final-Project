@@ -39,11 +39,18 @@
   </div>
   <div class="newtext">
 
-    <h3><form action="/results.html" method="post">
-
-        <textarea name="query" rows="5" cols="80" placeholder="Search.." name="search"></textarea><br></h3>
-        <h3><input type="submit" value="Find"></h3>
-    </form>
+    <form action="/purchase" method="post">
+      <label for="model">Model:</label>
+      <input type="text" id="model" name="model" placeholder="Enter car model" required><br>
+      <label for="color">Color:</label>
+      <input type="text" id="color" name="color" placeholder="Enter car color" required><br>
+      <label for="customer_email">Your Email:</label>
+      <input type="text" id="customer_email" name="customer_email" placeholder="Please enter your email" required><br>
+      <label for="sale_date">Sale Date:</label>
+      <input type="date" id="sale_date" name="sale_date" required><br>
+      <label for="employee_id">Employee ID:</label>
+      <input type="text" id="employee_id" name="employee_id" placeholder="Enter employee ID" required><br>
+      <input type="submit" value="Purchase"> </form>
   </div>
 
   <div class="new2text">
