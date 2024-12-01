@@ -35,6 +35,128 @@ def find_employee2():
 def stock():
     return render_template('Stock.html')
 
+@app.route('/search_inventory', methods=['POST'])
+def search_inventory():
+    # Get form data
+    inventory_type = request.form.get('inventory_type')  # 'new_inventory' or 'used_inventory'
+    model = request.form.get('model')
+    year = request.form.get('year')
+    manufacturing_country = request.form.get('manufacturing_country')
+    msrp_min = request.form.get('msrp_min')
+    msrp_max = request.form.get('msrp_max')
+
+    # Construct base query with JOIN
+    if inventory_type == "new_inventory":
+        query = f"""
+            SELECT 
+                car_type.model,
+                inv.vin,
+                car_type.car_year,
+                car_type.manufacturing_country, 
+                car_type.msrp 
+            FROM {inventory_type} inv
+            JOIN car_type ON inv.type_id = car_type.type_id
+            WHERE 1=1
+        """
+    if inventory_type == "used_inventory":
+        query = "SELECT * FROM used_inventory WHERE 1=1"
+
+    params = []
+
+    # Add filters dynamically
+    if model:
+        query += " AND car.model = %s"
+        params.append(model)
+    if year:
+        query += " AND inv.year = %s"
+        params.append(year)
+    if manufacturing_country:
+        query += " AND car.manufacturing_country = %s"
+        params.append(manufacturing_country)
+    if msrp_min:
+        query += " AND car.msrp >= %s"
+        params.append(msrp_min)
+    if msrp_max:
+        query += " AND car.msrp <= %s"
+        params.append(msrp_max)
+
+    # Connect to the MySQL database
+    results = []
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+    # Generate an HTML table from the results
+    table_html = """
+    <table border="1" style="width:100%; border-collapse:collapse;">
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Year</th>
+                <th>Manufacturing Country</th>
+                <th>MSRP</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
+    for row in results:
+        table_html += "<tr>"
+        for cell in row:
+            table_html += f"<td>{cell}</td>"
+        table_html += "</tr>"
+    table_html += """
+        </tbody>
+    </table>
+    """
+
+    # Render the table on a basic HTML page
+    html_template = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Inventory Search Results</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                padding: 20px;
+            }}
+            table {{
+                margin-top: 20px;
+                width: 100%;
+                border: 1px solid #ccc;
+                border-collapse: collapse;
+            }}
+            th, td {{
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: left;
+            }}
+            th {{
+                background-color: #f2f2f2;
+            }}
+        </style>
+    </head>
+    <body>
+        <h1>Inventory Search Results</h1>
+        {table_html}
+    </body>
+    </html>
+    """
+
+    return render_template_string(html_template)
+
+
 @app.route('/findcustomer')
 def find_customer():
     return render_template('findcustomer.html')
