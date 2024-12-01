@@ -296,12 +296,12 @@ def purchase():
         else:
             return "Car not found", 404
 
-        except mysql.connector.Error as err:
+    except mysql.connector.Error as err:
             return f"Error: {err}", 500
 
-        finally:
-            cursor.close()
-            conn.close()
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @app.route('/employee_contact', methods=['GET', 'POST'])

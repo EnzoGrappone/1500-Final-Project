@@ -5,57 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/Style_8.css') }}">
     <title>SQL Query Executor</title>
-    <script> function checkPasscode()
-    { var passcode = prompt("Enter passcode:");
-    if (passcode === "1234") {
-      document.getElementById("employeeDropdown").style.display = "block";
-    }
-    else {
-       alert("Incorrect passcode. Access denied.");
-     }
-   }
- </script>
+    <script> 
+        function checkPasscode() {
+            var passcode = prompt("Enter passcode:");
+            if (passcode === "1234") {
+                document.getElementById("employeeDropdown").style.display = "block";
+            } else {
+                alert("Incorrect passcode. Access denied.");
+            }
+        }
+    </script>
 </head>
 <body>
-  <div class="column">
-  <img src="{{ url_for('static', filename='/BMW-Logo.png') }}" alt="A picture of BMW logo" style="width:7%; max-height:7%">
-  <p>BMW Pittsburgh</p>
+    <div class="column">
+        <img src="{{ url_for('static', filename='/BMW-Logo.png') }}" alt="A picture of BMW logo" style="width:7%; max-height:7%">
+        <p>BMW Pittsburgh</p>
 
+        <div class="dropdown">
+            <button class="dropb">Employee</button>
+            <div class="dropdown-content">
+                <a href="{{ url_for('home2') }}">Main</a>
+                <a href="{{ url_for('stock') }}">In stock</a>
+                <a href="{{ url_for('find_employee1') }}">Find an Employee Record</a>
+                <a href="{{ url_for('find_service') }}">Find a Service Record</a>
+                <a href="{{ url_for('find_sale') }}">Find a Sale</a>
+                <a href="{{ url_for('find_customer') }}">Find a Customer</a>
+            </div>
+        </div>
+    </div>
 
+    <div class="newtext">
+        <h2>Search for Inventory</h2>
+        <form action="/search_inventory" method="POST">
+            <label for="inventory-type">Inventory Type:</label>
+            <select id="inventory-type" name="inventory_type" required>
+                <option value="new_inventory">New Inventory</option>
+                <option value="used_inventory">Used Inventory</option>
+            </select>
 
-  <div class="dropdown">
-  <button class="dropb" >Employee</button>
-  <div class="dropdown-content" >
-    <a href="{{url for ('home2')}}">Main</a>
-    <a href="{{url for ('stock')}}">In stock</a>
-    <a href="{{url for ('find_employee1')}}">Find an employee Record</a>
-    <a href="{{url for ('find_service')}}">Find a Service Record</a>
-    <a href="{{url for ('find_sale')}}">Find a Sale</a>
-    <a href="{{url for ('find_customer')}}">Find a Customer</a>
+            <label for="model">Model:</label>
+            <input type="text" id="model" name="model" placeholder="Enter car model">
 
+            <label for="year">Year:</label>
+            <input type="number" id="year" name="year" placeholder="Enter manufacturing year">
 
+            <label for="manufacturing-country">Manufacturing Country:</label>
+            <input type="text" id="manufacturing-country" name="manufacturing_country" placeholder="Enter country">
 
-  </div>
-</div>
+            <label for="msrp-min">MSRP Min:</label>
+            <input type="number" id="msrp-min" name="msrp_min" placeholder="Enter minimum MSRP">
 
+            <label for="msrp-max">MSRP Max:</label>
+            <input type="number" id="msrp-max" name="msrp_max" placeholder="Enter maximum MSRP">
 
-</div>
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
-  <div class="newtext">
-    <h2>Search for inventory</h2>
-  </div>
-  <div class="newtext">
-
-    <h3><form action="/results.html" method="post">
-
-        <textarea name="query" rows="5" cols="80"></textarea><br></h3>
-        <h3><input type="submit" value="Find"></h3>
-    </form>
-  </div>
-
-  <div class="new2text">
-  	<p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
-  </div>
-
+    <div class="new2text">
+        <p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
+    </div>
 </body>
 </html>
