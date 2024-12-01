@@ -44,6 +44,10 @@
             <label for="sale_id">Sale ID:</label><br>
             <input type="text" id="sale_id" name="sale_id" placeholder="Enter Sale ID"><br><br>
 
+            # customer first box
+            # customer last box
+
+            
             <label for="customer_email">Customer Email:</label><br>
             <input type="email" id="customer_email" name="customer_email" placeholder="Enter Customer Email"><br><br>
 
@@ -69,16 +73,18 @@
                         <th>Vin</th>
                         <th>Sale Date</th>
                         <th>Sale Price</th>
+                        <th>Employee ID</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for sale in sales %}
                         <tr>
                             <td>{{ sale[0] }}</td> <!-- Sale ID -->
-                            <td>{{ sale[1] }}</td> <!-- Car ID -->
-                            <td>{{ sale[2] }}</td> <!-- Customer ID -->
+                            <td>{{ sale[1] }}</td> <!-- Customer Email -->
+                            <td>{{ sale[2] }}</td> <!-- Vin -->
                             <td>{{ sale[3] }}</td> <!-- Sale Date -->
                             <td>{{ sale[4] }}</td> <!-- Sale Price -->
+                            <td>{{ sale[5] }}</td> <!-- Employee ID -->
                         </tr>
                     {% endfor %}
                 </tbody>
