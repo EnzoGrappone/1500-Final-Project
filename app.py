@@ -258,6 +258,52 @@ def car_inventory():
         cursor.close()
         conn.close()
 
+
+@app.route('/purchase', methods=['POST'])
+def purchase():
+    car_model = request.form.get('model')
+    car_color = request.form.get('color')
+    customer_id = request.form.get('customer_id')
+    customer_email = request.form.get('customer_email')
+    employee_id = request.form.get('employee_id')
+    sale_date = request.form.get('sale_date')
+
+    if not (car_model and car_color and customer_id and customer_email and employee_id and sale_date):
+        return "Missing data", 400
+
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        query_car = "SELECT * FROM new_inventory WHERE car_model = %s AND color = %s"
+        cursor.execute(query_car, (car_model, car_color))
+        car = cursor.fetchone()
+
+        if car:
+            # Add sale record
+            vin = car[1]
+            query_add_sale = """INSERT INTO sale (sale_id, customer_email, vin, sale_date, employee_id)
+            VALUES (%s, %s, %s)
+            """
+            cursor.execute(query_add_sale, (sale_id, customer_email, vin, sale_date, employee_id))
+            sale_id = cursor.lastrowid
+            # Remove car from inventory
+            query_remove_car = "DELETE FROM new_inventory WHERE vin = %s"
+            cursor.execute(query_remove_car, (vin,))
+
+            conn.commit() #Transaction
+            return f"Purchase successful! Sale ID: {sale_id}"
+
+        else:
+            return "Car not found", 404
+
+        except mysql.connector.Error as err:
+            return f"Error: {err}", 500
+
+        finally:
+            cursor.close()
+            conn.close()
+
+
 @app.route('/employee_contact', methods=['GET', 'POST'])
 def employee_contact():
     # Get user input from the form
