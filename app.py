@@ -49,12 +49,12 @@ def search_inventory():
     # Construct base query with JOIN
     if inventory_type == "new_inventory":
         query = f"""
-            SELECT 
+            SELECT
                 car_type.model,
                 inv.vin,
                 car_type.car_year,
-                car_type.manufacturing_country, 
-                car_type.msrp 
+                car_type.manufacturing_country,
+                car_type.msrp
             FROM {inventory_type} inv
             JOIN car_type ON inv.type_id = car_type.type_id
             WHERE 1=1
@@ -220,7 +220,7 @@ def search_inventory():
         </body>
         </html>
         """
-        
+
     return render_template_string(html_template)
 
 
@@ -454,7 +454,7 @@ def purchase():
     employee_id = request.form.get('employee_id')
     sale_date = request.form.get('sale_date')
 
-    if not (car_model and car_color and customer_id and customer_email and employee_id and sale_date):
+    if not (car_model and car_color and customer_email and employee_id and sale_date):
         return "Missing data", 400
 
     try:
