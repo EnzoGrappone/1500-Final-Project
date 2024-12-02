@@ -616,8 +616,8 @@ def purchase():
             conn.commit()
             return f"Purchase successful! Sale ID: {sale_id}"
 
-        else:
-            return "Car not found", 404
+    else:
+        return "Car not found", 404
 
     except mysql.connector.Error as err:
         return f"Error: {err}", 500
