@@ -227,6 +227,135 @@ def search_inventory():
 def find_service():
     return render_template('findservice.html')
 
+#when employee searches through new and used inventories
+@app.route('/findservice', methods=['POST'])
+def search_service():
+    # Get form data
+    service_id = request.form.get('service_id')
+    email = request.form.get('customer_email')
+    date = request.form.get('date')
+    license = request.form.get('license')
+    service_type = request.form.get('service_type')
+    employee_id = request.form.get('employee_id')
+
+    if service_id:
+        query = f"""SELECT service_id, customer_email, CONCAT(car_type.car_year, ' ', car_type.model), license_plate_number, color, service_type, appointment_date, CONCAT(employee.first_name, ' ', employee.last_name) 
+        FROM service 
+        JOIN car_type ON service.type_id = car_type.type_id JOIN employee ON employee.employee_id = service.employee_id 
+        WHERE 1 = 1"""
+
+        params = []
+
+        query += " AND service_id = %s"
+        params.append(service_id)
+
+    else: 
+        query = f"""
+            SELECT service_id, customer_email, CONCAT(car_type.car_year, ' ', car_type.model), license_plate_number, color, service_type, appointment_date, CONCAT(employee.first_name, ' ', employee.last_name) 
+            FROM service 
+            JOIN car_type ON service.type_id = car_type.type_id JOIN employee ON employee.employee_id = service.employee_id
+            WHERE 1 = 1
+        """
+        params = []
+
+        # Add filters dynamically
+        if email:
+            query += " AND customer_email = %s"
+            params.append(email)
+        if date:
+            query += " AND appointment_date = %s"
+            params.append(date)
+        if license:
+            query += " AND license_plate_number = %s"
+            params.append(license)
+        if service_type:
+            query += " AND service_type = %s"
+            params.append(service_type)
+        if employee_id:
+            query += " AND employee_id = %s"
+            params.append(employee_id)
+
+    # Connect to the MySQL database
+    results = []
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+
+    # Generate an HTML table from the results
+    table_html = """
+    <table border="1" style="width:100%; border-collapse:collapse;">
+        <thead>
+            <tr>
+                <th>Service ID</th>
+                <th>Customer Email</th>
+                <th>Model</th>
+                <th>License</th>
+                <th>Color</th>
+                <th>Service Type</th>
+                <th>Appointment Date</th>
+                <th>Employee</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
+    for row in results:
+        table_html += "<tr>"
+        for cell in row:
+            table_html += f"<td>{cell}</td>"
+        table_html += "</tr>"
+    table_html += """
+        </tbody>
+    </table>
+    """
+
+    # Render the table on a basic HTML page
+    html_template = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Inventory Search Results</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                padding: 20px;
+            }}
+            table {{
+                margin-top: 20px;
+                width: 100%;
+                border: 1px solid #ccc;
+                border-collapse: collapse;
+            }}
+            th, td {{
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: left;
+            }}
+            th {{
+                background-color: #f2f2f2;
+            }}
+        </style>
+    </head>
+    <body>
+        <h1>Inventory Search Results</h1>
+        {table_html}
+    </body>
+    </html>
+    """
+    
+    return render_template_string(html_template)
+
 @app.route('/home2')
 def home2():
     return render_template('index2.html')
