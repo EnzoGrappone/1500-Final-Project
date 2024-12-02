@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, render_template_string
 import mysql.connector
+import uuid
 
 app = Flask(__name__)
 
@@ -483,7 +484,7 @@ def purchase():
             query_remove_car = "DELETE FROM new_inventory WHERE vin = %s"
             cursor.execute(query_remove_car, (vin,))
 
-            conn.commit()  
+            conn.commit()
             return f"Purchase successful! Sale ID: {sale_id}"
 
         else:
