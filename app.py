@@ -597,12 +597,12 @@ def purchase():
             vin = car[0]
             sale_price = car[1]
 
-        cursor.execute("SELECT MAX(CAST(SUBSTRING(sale_id, 2) AS UNSIGNED)) FROM sale")
-        max_id = cursor.fetchone()[0]
-        if max_id is None:
-            sale_id = "S1"
-        else:
-            sale_id = f"S{max_id + 1}"
+            cursor.execute("SELECT MAX(CAST(SUBSTRING(sale_id, 2) AS UNSIGNED)) FROM sale")
+            max_id = cursor.fetchone()[0]
+            if max_id is None:
+                sale_id = "S1"
+            else:
+                sale_id = f"S{max_id + 1}"
             
             query_add_sale = """
                 INSERT INTO sale (sale_id, customer_email, vin, sale_date, sale_price, employee_id)
@@ -616,8 +616,8 @@ def purchase():
             conn.commit()
             return f"Purchase successful! Sale ID: {sale_id}"
 
-    else:
-        return "Car not found", 404
+        else:
+            return "Car not found", 404
 
     except mysql.connector.Error as err:
         return f"Error: {err}", 500
