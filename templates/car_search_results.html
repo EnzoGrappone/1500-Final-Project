@@ -4,7 +4,7 @@
             <th>Model</th>
             <th>Year</th>
             <th>Price</th>
-            <th>Condition</th>
+            <th>Manufacturing Country</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -13,8 +13,8 @@
         <tr>
             <td>{{ row[1] }}</td>  <!-- Assuming row[1] is the model -->
             <td>{{ row[2] }}</td>  <!-- Assuming row[2] is the year -->
-            <td>{{ row[3] }}</td>  <!-- Assuming row[3] is the price -->
-            <td>{{ row[4] }}</td>  <!-- Assuming row[4] is the condition -->
+            <td>{{ row[4] }}</td>  <!-- Assuming row[4] is the price -->
+            <td>{{ row[3] }}</td>  <!-- Assuming row[3] is the condition -->
             <td>
                 <!-- Button to view inventory for this type_id -->
                 <a href="{{ url_for('car_inventory', type_id=row[0]) }}">

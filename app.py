@@ -281,9 +281,6 @@ def sale_search():
     return render_template('findsale.html', sales=sales)
 
 
-
-
-
 # Database configuration
 db_config = {
     'host': '127.0.0.1',
