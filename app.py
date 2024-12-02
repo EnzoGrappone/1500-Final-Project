@@ -1,15 +1,10 @@
-from flask import Flask, request, render_template, render_template_string
+from flask import Flask, request, render_template, render_template_string, redirect, url_for
 import mysql.connector
-import uuid
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('Login.html')
-
-@app.route('/login')
-def login():
     return render_template('Login.html')
 
 @app.route('/home1')
@@ -32,6 +27,10 @@ def find_employee1():
 def find_employee2():
     return render_template('findemployee2.html')
 
+@app.route('/Findcustomer')
+def find_customer():
+    return render_template('findcustomer.html')
+
 @app.route('/stock')
 def stock():
     return render_template('Stock.html')
@@ -50,12 +49,12 @@ def search_inventory():
     # Construct base query with JOIN
     if inventory_type == "new_inventory":
         query = f"""
-            SELECT
+            SELECT 
                 car_type.model,
                 inv.vin,
                 car_type.car_year,
-                car_type.manufacturing_country,
-                car_type.msrp
+                car_type.manufacturing_country, 
+                car_type.msrp 
             FROM {inventory_type} inv
             JOIN car_type ON inv.type_id = car_type.type_id
             WHERE 1=1
@@ -221,13 +220,8 @@ def search_inventory():
         </body>
         </html>
         """
-
+        
     return render_template_string(html_template)
-
-
-@app.route('/findcustomer')
-def find_customer():
-    return render_template('findcustomer.html')
 
 @app.route('/findservice')
 def find_service():
@@ -496,8 +490,96 @@ def purchase():
         cursor.close()
         conn.close()
 
+@app.route('/get_customer', methods=['GET', 'POST'])
+def get_customer():
+    # Get user input from the form
+    search_entry = request.form.get('query')
 
+    # Base SQL query
+    query = " SELECT CONCAT(first_name, ' ', last_name) AS Name, customer.customer_email AS Email, cust_contact.phone_number AS Phone, cust_contact.address AS Address FROM customer JOIN cust_contact ON customer.customer_email = cust_contact.customer_email"
+    params = []
 
+    # Add conditions based on user input
+    if search_entry:
+        query += " AND (first_name LIKE '" + search_entry + "' OR last_name LIKE '" + search_entry + "' OR CONCAT(first_name, ' ', last_name) LIKE '" + search_entry + "')"
+
+    try:
+        # Database connection
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute(query, params)  # Use parameterized query
+        rows = cursor.fetchall()
+        headers = [desc[0] for desc in cursor.description]
+
+        # Handle empty results
+        if rows:
+            # Build HTML table
+            html_table = """
+            <style>
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 1em;
+                font-family: Arial, sans-serif;
+                min-width: 400px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            }}
+            table thead tr {{
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+            }}
+                table th, table td {{
+                padding: 12px 15px;
+                border: 1px solid #dddddd;
+            }}
+            table tbody tr {{
+                border-bottom: 1px solid #dddddd;
+            }}
+            table tbody tr:nth-of-type(even) {{
+                background-color: #f3f3f3;
+            }}
+            table tbody tr:last-of-type {{
+                border-bottom: 2px solid #009879;
+            }}
+            </style>
+            <table>
+                <thead>
+                    <tr>{}</tr>
+                </thead>
+                <tbody>
+                    {}
+                </tbody>
+            </table>
+            """.format(
+                "".join(f"<th>{col}</th>" for col in headers),
+                "".join(
+                    "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
+                    for row in rows
+                )
+            )
+        else:
+            html_table = "<p>No results found.</p>"
+
+        # Return rendered HTML
+        return render_template_string("""
+        <html>
+        <body>
+            <h2>Customer Contact Results</h2>
+            {{ table|safe }}
+            <br>
+            <a href="{{ url_for('find_customer') }}">Back to Search</a>
+        </body>
+        </html>
+        """, table=html_table)
+
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+
+    finally:
+        cursor.close()
+        conn.close()
 
 @app.route('/employee_contact', methods=['GET', 'POST'])
 def employee_contact():
@@ -589,6 +671,42 @@ def employee_contact():
     finally:
         cursor.close()
         conn.close()
+
+
+@app.route('/Login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # Get user input from the form
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user_type = request.form.get('user-type')
+        # Validate input
+        if not username or not password or not user_type:
+            return render_template('Login.html', error="Please fill all fields.")
+        try:
+            # Database connection
+            conn = mysql.connector.connect(**db_config)
+            cursor = conn.cursor()
+            # Determine query based on user type
+            if user_type == 'Customer':
+                query = "SELECT * FROM customer JOIN cust_contact ON customer.customer_email = cust_contact.customer_email WHERE customer.customer_email = %s AND cust_contact.password = %s"
+            else:
+                query = "SELECT * FROM employee JOIN emp_info ON employee.email = emp_info.email WHERE employee.email = %s AND emp_info.password = %s"
+            # Execute query
+            cursor.execute(query, (username, password))
+            result = cursor.fetchone()
+            if result:
+                # Redirect based on user type
+                if user_type == 'Customer':
+                    return redirect(url_for('home1'))
+                elif user_type == 'Employee':
+                    return redirect(url_for('home2'))
+            else:
+                return render_template('Login.html', error="Incorrect username or password.")
+        finally:
+            cursor.close()
+            conn.close()
+
 
 
 # Only one app.run() needed, here at the bottom.
