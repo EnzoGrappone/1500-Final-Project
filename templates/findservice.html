@@ -3,57 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/Style_4.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Style_4.css') }}">
     <title>SQL Query Executor</title>
-    <script> function checkPasscode()
-    { var passcode = prompt("Enter passcode:");
-    if (passcode === "1234") {
-      document.getElementById("employeeDropdown").style.display = "block";
-    }
-    else {
-       alert("Incorrect passcode. Access denied.");
-     }
-    }
+    <script>
+        function checkPasscode() {
+            var passcode = prompt("Enter passcode:");
+            if (passcode === "1234") {
+                document.getElementById("employeeDropdown").style.display = "block";
+            } else {
+                alert("Incorrect passcode. Access denied.");
+            }
+        }
     </script>
 </head>
 <body>
-  <div class="column">
-  <img src="{{ url_for('static', filename='/BMW-Logo.png') }}" alt="A picture of BMW logo" style="width:7%; max-height:7%">
-  <p>BMW Pittsburgh</p>
+    <div class="column">
+        <img src="{{ url_for('static', filename='BMW-Logo.png') }}" alt="A picture of BMW logo" style="width:7%; max-height:7%">
+        <p>BMW Pittsburgh</p>
 
+        <div class="dropdown">
+            <button class="dropb">Employee</button>
+            <div class="dropdown-content">
+                <a href="{{ url_for('home2') }}">Main</a>
+                <a href="{{ url_for('stock') }}">In stock</a>
+                <a href="{{ url_for('find_employee1') }}">Find an employee Record</a>
+                <a href="{{ url_for('find_service') }}">Find a Service Record</a>
+                <a href="{{ url_for('find_sale') }}">Find a Sale</a>
+                <a href="{{ url_for('find_customer') }}">Find a Customer</a>
+            </div>
+        </div>
+    </div>
 
-<div class="dropdown">
-<button class="dropb">Employee</button>
-<div class="dropdown-content" >
-  <a href="{{url_for ('home2')}}">Main</a>
-  <a href="{{url_for ('stock')}}">In stock</a>
-  <a href="{{url_for ('find_employee1')}}">Find an employee Record</a>
-  <a href="{{url_for ('find_service')}}">Find a Service Record</a>
-  <a href="{{url_for ('find_sale')}}">Find a Sale</a>
-  <a href="{{url_for ('find_customer')}}">Find a Customer</a>
+    <div class="newtext">
+        <h2>Which service record are you looking for?</h2>
+    </div>
 
+    <div class="newtext">
+        <h3>
+            <!-- Form action points to the search_service endpoint -->
+            <form action="{{ url_for('search_service') }}" method="POST">
+                <label for="service_id">Service ID:</label><br>
+                <input type="text" id="service_id" name="service_id" placeholder="Enter Service ID"><br><br>
 
+                <label for="customer_email">Customer Email:</label><br>
+                <input type="email" id="customer_email" name="customer_email" placeholder="Enter Customer Email"><br><br>
 
+                <label for="date">Date:</label><br>
+                <input type="date" id="date" name="date"><br><br>
 
-</div>
-</div>
-</div>
+                <label for="license">License:</label><br>
+                <input type="text" id="license" name="license" placeholder="Enter License"><br><br>
 
-  <div class="newtext">
-    <h2>Which service record are you looking for?</h2>
-  </div>
-  <div class="newtext">
+                <label for="service_type">Service Type:</label><br>
+                <input type="text" id="service_type" name="service_type" placeholder="Enter Service Type"><br><br>
 
-    <h3><form action="/results.html" method="post">
+                <label for="employee_id">Employee ID:</label><br>
+                <input type="text" id="employee_id" name="employee_id" placeholder="Enter Employee ID"><br><br>
 
-        <textarea name="query" rows="5" cols="80" placeholder="Search.." name="search"></textarea><br></h3>
-        <h3><input type="submit" value="Find"></h3>
-    </form>
-  </div>
+                <input type="submit" value="Find">
+            </form>
+        </h3>
+    </div>
 
-  <div class="new2text">
-  	<p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
-  </div>
-
+    <div class="new2text">
+        <p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
+    </div>
 </body>
 </html>
