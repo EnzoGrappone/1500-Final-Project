@@ -3,59 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/Style_7.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='Style_7.css') }}">
     <title>SQL Query Executor</title>
-    <script> function checkPasscode()
-    { var passcode = prompt("Enter passcode:");
-    if (passcode === "1234") {
-      document.getElementById("employeeDropdown").style.display = "block";
-    }
-    else {
-       alert("Incorrect passcode. Access denied.");
-     }
-   }
- </script>
+    <script>
+        function checkPasscode() {
+            var passcode = prompt("Enter passcode:");
+            if (passcode === "1234") {
+                document.getElementById("employeeDropdown").style.display = "block";
+            } else {
+                alert("Incorrect passcode. Access denied.");
+            }
+        }
+    </script>
 </head>
 <body>
-  <div class="column">
-  <img src="{{ url_for('static', filename='/BMW-Logo.png') }}" alt="A picture of BMW logo" style="width:7%; max-height:7%">
-  <p>BMW Pittsburgh</p>
+    <div class="column">
+        <img src="{{ url_for('static', filename='BMW-Logo.png') }}" alt="A picture of BMW logo" style="width:7%; max-height:7%">
+        <p>BMW Pittsburgh</p>
 
+        <div class="dropdown">
+            <button class="dropb">Employee</button>
+            <div class="dropdown-content">
+                <a href="{{ url_for('home2') }}">Main</a>
+                <a href="{{ url_for('stock') }}">In stock</a>
+                <a href="{{ url_for('find_employee1') }}">Find an employee Record</a>
+                <a href="{{ url_for('find_service') }}">Find a Service Record</a>
+                <a href="{{ url_for('find_sale') }}">Find a Sale</a>
+                <a href="{{ url_for('find_customer') }}">Find a Customer</a>
+            </div>
+        </div>
+    </div>
 
+    <div class="newtext">
+        <h2>Which customer are you looking for?</h2>
+    </div>
+    <div class="newtext">
+        <h3>
+            <form action="{{ url_for('get_customer') }}" method="POST">
+                <textarea name="query" rows="5" cols="80"></textarea><br>
+                <input type="submit" value="Find">
+            </form>
+        </h3>
+    </div>
 
-<div class="dropdown">
-<button class="dropb" >Employee</button>
-<div class="dropdown-content" >
-  <a href="{{url_for ('home2')}}">Main</a>
-  <a href="{{url_for ('stock')}}">In stock</a>
-  <a href="{{url_for ('find_employee1')}}">Find an employee Record</a>
-  <a href="{{url_for ('find_service')}}">Find a Service Record</a>
-  <a href="{{url_for ('find_sale')}}">Find a Sale</a>
-  <a href="{{url_for ('find_customer')}}">Find a Customer</a>
-
-
-
-  </div>
-</div>
-
-
-</div>
-
-  <div class="newtext">
-    <h2>Which customer are you looking for?</h2>
-  </div>
-  <div class="newtext">
-
-    <h3><form action="/results.html" method="post">
-
-        <textarea name="query" rows="5" cols="80"></textarea><br></h3>
-        <h3><input type="submit" value="Find"></h3>
-    </form>
-  </div>
-
-  <div class="new2text">
-  	<p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
-  </div>
-
+    <div class="new2text">
+        <p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
+    </div>
 </body>
 </html>
