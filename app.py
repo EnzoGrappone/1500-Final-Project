@@ -479,7 +479,6 @@ def purchase():
                 VALUES (UUID(), %s, %s, %s, %s, %s)
             """
             cursor.execute(query_add_sale, (customer_email, vin, sale_date, sale_price, employee_id))
-            sale_id = cursor.lastrowid
 
             query_remove_car = "DELETE FROM new_inventory WHERE vin = %s"
             cursor.execute(query_remove_car, (vin,))
