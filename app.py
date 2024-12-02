@@ -447,21 +447,21 @@ def car_inventory():
 
 @app.route('/purchase', methods=['POST'])
 def purchase():
-    car_model = request.form.get('model')
+    model = request.form.get('model')
     car_color = request.form.get('color')
     customer_id = request.form.get('customer_id')
     customer_email = request.form.get('customer_email')
     employee_id = request.form.get('employee_id')
     sale_date = request.form.get('sale_date')
 
-    if not (car_model and car_color and customer_email and employee_id and sale_date):
+    if not (model and car_color and customer_email and employee_id and sale_date):
         return "Missing data", 400
 
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-        query_car = "SELECT * FROM new_inventory WHERE car_model = %s AND color = %s"
-        cursor.execute(query_car, (car_model, car_color))
+        query_car = "SELECT * FROM new_inventory WHERE model = %s AND color = %s"
+        cursor.execute(query_car, (model, car_color))
         car = cursor.fetchone()
 
         if car:
