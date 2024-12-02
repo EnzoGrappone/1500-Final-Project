@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/greentables.css') }}">
 <table border="1">
     <thead>
         <tr>
@@ -9,19 +10,25 @@
         </tr>
     </thead>
     <tbody>
-        {% for row in rows %}
-        <tr>
-            <td>{{ row[1] }}</td>  <!-- Assuming row[1] is the model -->
-            <td>{{ row[2] }}</td>  <!-- Assuming row[2] is the year -->
-            <td>{{ row[4] }}</td>  <!-- Assuming row[4] is the price -->
-            <td>{{ row[3] }}</td>  <!-- Assuming row[3] is the condition -->
-            <td>
-                <!-- Button to view inventory for this type_id -->
-                <a href="{{ url_for('car_inventory', type_id=row[0]) }}">
-                    <button>View Inventory</button>
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
+        {% if rows %}
+            {% for row in rows %}
+            <tr>
+                <td>{{ row[1] }}</td>  <!-- Assuming row[1] is the model -->
+                <td>{{ row[2] }}</td>  <!-- Assuming row[2] is the year -->
+                <td>{{ row[4] }}</td>  <!-- Assuming row[4] is the price -->
+                <td>{{ row[3] }}</td>  <!-- Assuming row[3] is the condition -->
+                <td>
+                    <!-- Button to view inventory for this type_id -->
+                    <a href="{{ url_for('car_inventory', type_id=row[0]) }}">
+                        <button>View Inventory</button>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center;">No cars match your search criteria.</td>
+            </tr>
+            {% endif %}
     </tbody>
 </table>

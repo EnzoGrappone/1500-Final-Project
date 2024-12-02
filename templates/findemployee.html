@@ -44,13 +44,28 @@
     <h2>Who are you looking for today?</h2>
   </div>
   <div class="newtext">
+        
+    <!-- Form action points to the search_service endpoint -->
+    <form action="{{ url_for('search_employee') }}" method="POST">
+        <label for="first_name">First:</label><br>
+        <input type="text" id="first_name" name="first_name" placeholder="Enter Employee's First Name"><br><br>
 
-    <h3><form action="/results.html" method="post">
+        <label for="last_name">Last:</label><br>
+        <input type="text" id="first_name" name="first_name" placeholder="Enter Employee's First Name"><br><br>
 
-        <textarea name="query" rows="5" cols="80" placeholder="Search.." name="search"></textarea><br></h3>
-        <h3><input type="submit" value="Find"></h3>
+        <label for="employee_id">Employee ID:</label><br>
+        <input type="text" id="employee_id" name="employee_id" placeholder="Enter Employee's ID"><br><br>
+
+        <label for="department_name">Department:</label><br>
+        <input type="text" id="department_name" name="department_name" placeholder="Enter Department"><br><br>
+
+        <label for="salary">Salary:</label><br>
+        <input type="text" id="salary" name="salary" placeholder="Enter Salary"><br><br>
+
+        <input type="submit" value="Find">
     </form>
-  </div>
+
+</div>
 
   <div class="new2text">
   	<p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>

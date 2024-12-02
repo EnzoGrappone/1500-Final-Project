@@ -126,6 +126,7 @@ def search_inventory():
         <!DOCTYPE html>
         <html lang="en">
         <head>
+            <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/greentables.css') }}">
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Inventory Search Results</title>
@@ -293,6 +294,7 @@ def search_service():
 
     # Generate an HTML table from the results
     table_html = """
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/greentables.css') }}">
     <table border="1" style="width:100%; border-collapse:collapse;">
         <thead>
             <tr>
@@ -323,6 +325,7 @@ def search_service():
     <!DOCTYPE html>
     <html lang="en">
     <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/greentables.css') }}">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Inventory Search Results</title>
@@ -807,6 +810,75 @@ def employee_contact():
     finally:
         cursor.close()
         conn.close()
+
+#employee search method for employee
+@app.route('/search_employee', methods=['GET', 'POST'])
+def search_employee():
+    # Get user input from the form
+    first_name = request.values.get('first_name')
+    last_name = request.values.get('last_name')
+    employee_id = request.values.get('employee_id')
+    department_name = request.values.get('department_name')
+
+    # Create query
+    query = """SELECT e.employee_id, e.first_name, e.last_name, e.department_id, 
+                      department.department_name, emp_info.phone_number, emp_info.email, 
+                      emp_info.address, emp_info.salary
+               FROM employee e
+               JOIN department ON department.department_id = e.department_id 
+               JOIN emp_info ON emp_info.email = e.email
+               WHERE 1=1
+            """
+    params = []
+
+    if first_name:
+        query += " AND first_name LIKE %s"
+        params.append(f"%{first_name}%")
+    if last_name:
+        query += " AND last_name LIKE %s"
+        params.append(f"%{last_name}%")
+    if employee_id:
+        query += " AND employee_id LIKE %s"
+        params.append(f"%{employee_id}%")
+    if department_name:
+        query += " AND department_name LIKE %s"
+        params.append(f"%{department_name}%")
+
+    # Connect to database and try query
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        
+        # Ensure rows is an empty list if no data is found
+        if not rows:
+            rows = []
+
+        headers = [desc[0] for desc in cursor.description]
+
+        if rows:
+            return render_template(
+                'find_employee_results.html',
+                headers=headers,
+                rows=rows
+            )
+        else:
+            return render_template(
+                'find_employee_results.html',
+                headers=headers,
+                rows=None,
+                message="No employees match your search criteria."
+            )
+
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
 
 
 @app.route('/Login', methods=['GET', 'POST'])
