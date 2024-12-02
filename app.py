@@ -1,10 +1,14 @@
-from flask import Flask, request, render_template, render_template_string, redirect, url_for
+from flask import Flask, request, render_template, render_template_string
 import mysql.connector
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
+    return render_template('Login.html')
+
+@app.route('/login')
+def login():
     return render_template('Login.html')
 
 @app.route('/home1')
@@ -465,9 +469,9 @@ def purchase():
         cursor.execute(query_car, (model, car_color))
         car = cursor.fetchone()
 
-        if car:
+        if car is not None:
             vin = car[0]
-            sale_price = car[4]
+            sale_price = car[1]
 
             query_add_sale = """
                 INSERT INTO sale (sale_id, customer_email, vin, sale_date, sale_price, employee_id)
@@ -479,7 +483,7 @@ def purchase():
             query_remove_car = "DELETE FROM new_inventory WHERE vin = %s"
             cursor.execute(query_remove_car, (vin,))
 
-            conn.commit()
+            conn.commit()  
             return f"Purchase successful! Sale ID: {sale_id}"
 
         else:
@@ -491,6 +495,7 @@ def purchase():
     finally:
         cursor.close()
         conn.close()
+
 
 
 
@@ -585,39 +590,6 @@ def employee_contact():
         cursor.close()
         conn.close()
 
-@app.route('/Login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        # Get user input from the form
-        username = request.form.get('username')
-        password = request.form.get('password')
-        user_type = request.form.get('user-type')
-        # Validate input
-        if not username or not password or not user_type:
-            return render_template('Login.html', error="Please fill all fields.")
-        try:
-            # Database connection
-            conn = mysql.connector.connect(**db_config)
-            cursor = conn.cursor()
-            # Determine query based on user type
-            if user_type == 'Customer':
-                query = "SELECT * FROM customer JOIN cust_contact ON customer.customer_email = cust_contact.customer_email WHERE customer.customer_email = %s AND cust_contact.password = %s"
-            else:
-                query = "SELECT * FROM employee JOIN emp_info ON employee.email = emp_info.email WHERE employee.email = %s AND emp_info.password = %s"
-            # Execute query
-            cursor.execute(query, (username, password))
-            result = cursor.fetchone()
-            if result:
-                # Redirect based on user type
-                if user_type == 'Customer':
-                    return redirect(url_for('home1'))
-                elif user_type == 'Employee':
-                    return redirect(url_for('home2'))
-            else:
-                return render_template('Login.html', error="Incorrect username or password.")
-        finally:
-            cursor.close()
-            conn.close()
 
 # Only one app.run() needed, here at the bottom.
 if __name__ == '__main__':
