@@ -606,7 +606,7 @@ def purchase():
             
             query_add_sale = """
                 INSERT INTO sale (sale_id, customer_email, vin, sale_date, sale_price, employee_id)
-                VALUES (UUID(), %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s)
             """
             cursor.execute(query_add_sale, (customer_email, vin, sale_date, sale_price, employee_id))
 
