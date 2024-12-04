@@ -32,6 +32,8 @@
   <a href="{{url_for ('find_service')}}">Find a Service Record</a>
   <a href="{{url_for ('find_sale')}}">Find a Sale</a>
   <a href="{{url_for ('find_customer')}}">Find a Customer</a>
+  <a href="{{ url_for('analysis') }}">Customer Analysis</a>
+
 
 
 
@@ -44,7 +46,7 @@
     <h2>Who are you looking for today?</h2>
   </div>
   <div class="newtext">
-        
+
     <!-- Form action points to the search_service endpoint -->
     <form action="{{ url_for('search_employee') }}" method="POST">
         <label for="first_name">First:</label><br>

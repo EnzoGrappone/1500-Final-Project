@@ -35,6 +35,14 @@ def find_customer():
 def stock():
     return render_template('Stock.html')
 
+@app.route('/create')
+def create():
+    return render_template('create.html')
+
+@app.route('/analysis')
+def analysis():
+    return render_template('analysis.html')
+
 #when employee searches through new and used inventories
 @app.route('/search_inventory', methods=['POST'])
 def search_inventory():
@@ -49,12 +57,12 @@ def search_inventory():
     # Construct base query with JOIN
     if inventory_type == "new_inventory":
         query = f"""
-            SELECT 
+            SELECT
                 car_type.model,
                 inv.vin,
                 car_type.car_year,
-                car_type.manufacturing_country, 
-                car_type.msrp 
+                car_type.manufacturing_country,
+                car_type.msrp
             FROM {inventory_type} inv
             JOIN car_type ON inv.type_id = car_type.type_id
             WHERE 1=1
@@ -221,7 +229,7 @@ def search_inventory():
         </body>
         </html>
         """
-        
+
     return render_template_string(html_template)
 
 @app.route('/findservice')
@@ -240,9 +248,9 @@ def search_service():
     employee_id = request.form.get('employee_id')
 
     if service_id:
-        query = f"""SELECT service_id, customer_email, CONCAT(car_type.car_year, ' ', car_type.model), license_plate_number, color, service_type, appointment_date, CONCAT(employee.first_name, ' ', employee.last_name) 
-        FROM service 
-        JOIN car_type ON service.type_id = car_type.type_id JOIN employee ON employee.employee_id = service.employee_id 
+        query = f"""SELECT service_id, customer_email, CONCAT(car_type.car_year, ' ', car_type.model), license_plate_number, color, service_type, appointment_date, CONCAT(employee.first_name, ' ', employee.last_name)
+        FROM service
+        JOIN car_type ON service.type_id = car_type.type_id JOIN employee ON employee.employee_id = service.employee_id
         WHERE 1 = 1"""
 
         params = []
@@ -250,10 +258,10 @@ def search_service():
         query += " AND service_id = %s"
         params.append(service_id)
 
-    else: 
+    else:
         query = f"""
-            SELECT service_id, customer_email, CONCAT(car_type.car_year, ' ', car_type.model), license_plate_number, color, service_type, appointment_date, CONCAT(employee.first_name, ' ', employee.last_name) 
-            FROM service 
+            SELECT service_id, customer_email, CONCAT(car_type.car_year, ' ', car_type.model), license_plate_number, color, service_type, appointment_date, CONCAT(employee.first_name, ' ', employee.last_name)
+            FROM service
             JOIN car_type ON service.type_id = car_type.type_id JOIN employee ON employee.employee_id = service.employee_id
             WHERE 1 = 1
         """
@@ -356,7 +364,7 @@ def search_service():
     </body>
     </html>
     """
-    
+
     return render_template_string(html_template)
 
 @app.route('/home2')
@@ -606,7 +614,7 @@ def purchase():
                 sale_id = "S1"
             else:
                 sale_id = f"S{max_id + 1}"
-            
+
             query_add_sale = """
                 INSERT INTO sale (sale_id, customer_email, vin, sale_date, sale_price, employee_id)
                 VALUES (%s, %s, %s, %s, %s, %s)
@@ -821,11 +829,11 @@ def search_employee():
     department_name = request.values.get('department_name')
 
     # Create query
-    query = """SELECT e.employee_id, e.first_name, e.last_name, e.department_id, 
-                      department.department_name, emp_info.phone_number, emp_info.email, 
+    query = """SELECT e.employee_id, e.first_name, e.last_name, e.department_id,
+                      department.department_name, emp_info.phone_number, emp_info.email,
                       emp_info.address, emp_info.salary
                FROM employee e
-               JOIN department ON department.department_id = e.department_id 
+               JOIN department ON department.department_id = e.department_id
                JOIN emp_info ON emp_info.email = e.email
                WHERE 1=1
             """
@@ -850,7 +858,7 @@ def search_employee():
         cursor = conn.cursor()
         cursor.execute(query, params)
         rows = cursor.fetchall()
-        
+
         # Ensure rows is an empty list if no data is found
         if not rows:
             rows = []

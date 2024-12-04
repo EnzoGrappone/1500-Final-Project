@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/Style_8.css') }}">
     <title>SQL Query Executor</title>
-    <script> 
+    <script>
         function checkPasscode() {
             var passcode = prompt("Enter passcode:");
             if (passcode === "1234") {
@@ -30,6 +30,8 @@
                 <a href="{{ url_for('find_service') }}">Find a Service Record</a>
                 <a href="{{ url_for('find_sale') }}">Find a Sale</a>
                 <a href="{{ url_for('find_customer') }}">Find a Customer</a>
+                <a href="{{ url_for('analysis') }}">Customer Analysis</a>
+
             </div>
         </div>
     </div>

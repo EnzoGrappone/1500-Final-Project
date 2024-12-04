@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/Style_9.css') }}">
+    <title>Data Analysis Queries</title>
+</head>
+<body>
+    <div class="column">
+        <img src="{{ url_for('static', filename='/BMW-Logo.png') }}" alt="A picture of BMW logo" style="width:7%; max-height:7%">
+        <p>BMW Pittsburgh</p>
+
+        <div class="dropdown">
+            <button class="dropb">Customer</button>
+            <div class="dropdown-content">
+              <a href="{{ url_for('home2') }}">Main</a>
+              <a href="{{ url_for('stock') }}">In stock</a>
+              <a href="{{ url_for('find_employee1') }}">Find an Employee Record</a>
+              <a href="{{ url_for('find_service') }}">Find a Service Record</a>
+              <a href="{{ url_for('find_sale') }}">Find a Sale</a>
+              <a href="{{ url_for('find_customer') }}">Find a Customer</a>
+              <a href="{{ url_for('analysis') }}">Customer Analysis</a>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="newtext">
+        <h2>Data Analysis Queries</h2>
+    </div>
+
+    <div class="newtext">
+        <!-- Form submission to /data_analysis route -->
+        <form method="GET" action="{{ url_for('analysis') }}">
+            <label for="query-type">Select Query:</label>
+            <select name="query_type" id="query-type">
+                <option value="top_customers">Top Customers for a Product</option>
+                <option value="most_popular_product">Most Popular Product</option>
+                <option value="age_group_spending">Customer Age Groups by Spending</option>
+            </select><br>
+
+            <label for="model-name">Model Name (if applicable):</label>
+            <input type="text" name="Model_name" id="model-name"><br>
+
+            <label for="age-group">Age Group (if applicable):</label>
+            <input type="text" name="age_group" id="age-group" placeholder="e.g., 18-25, 26-35"><br>
+
+            <button type="submit">Run Query</button>
+        </form>
+    </div>
+
+    <div class="new2text">
+        <p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
+    </div>
+</body>
+</html>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_1.css') }}">
 
-    <title>BMW Pittsburgh Login</title>
+    <title>BMW Pittsburgh Create Account</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,29 +16,30 @@
             padding-left: 60%;
             height: 100vh;
         }
-        .login-container {
+        .create-account-container {
             background-color: #fff;
             padding: 80px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
-        .login-container h2 {
+        .create-account-container h2 {
             margin-bottom: 20px;
         }
-        .login-container label {
+        .create-account-container label {
             display: block;
             margin-bottom: 5px;
         }
-        .login-container input[type="text"],
-        .login-container input[type="password"],
-        .login-container select {
+        .create-account-container input[type="text"],
+        .create-account-container input[type="password"],
+        .create-account-container input[type="email"],
+        .create-account-container select {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-        .login-container button {
+        .create-account-container button {
             width: 100%;
             padding: 10px;
             background-color: #0078d7;
@@ -47,45 +48,32 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        .login-container button:hover {
+        .create-account-container button:hover {
             background-color: #005cbf;
-        }
-        .login-container .create-account-link {
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-        }
-        .login-container .create-account-link a {
-            color: #0078d7;
-            text-decoration: none;
-        }
-        .login-container .create-account-link a:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Welcome to BMW Pittsburgh</h2>
-        <form action="{{ url_for('login') }}" method="POST">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+    <div class="create-account-container">
+        <h2>Create a New Account</h2>
+        <form action="{{ url_for('create_account') }}" method="POST">
+            <label for="first_name">First name:</label>
+            <input type="text" id="first_name" name="first_name" required>
+
+            <label for="last_name">Last name:</label>
+            <input type="text" id="last_name" name=";last_name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
 
-            <label for="user-type">I am a:</label>
-            <select id="user-type" name="user-type" required>
-                <option value="Customer">Customer</option>
-                <option value="Employee">Employee</option>
-            </select>
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
 
-            <button type="submit">Login</button>
+            <button type="submit">Create Account</button>
         </form>
-
-        <div class="create-account-link">
-            <a href="{{ url_for('create') }}">Create a new account</a>
-        </div>
 
         {% if error %}
         <script>
