@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, render_template, render_template_string, url_for
+from flask import Flask, request, render_template, render_template_string, redirect, url_for
 import mysql.connector
 
 app = Flask(__name__)
@@ -27,17 +27,408 @@ def find_employee1():
 def find_employee2():
     return render_template('findemployee2.html')
 
+@app.route('/Findcustomer')
+def find_customer():
+    return render_template('findcustomer.html')
+
 @app.route('/stock')
 def stock():
     return render_template('Stock.html')
 
-@app.route('/findcustomer')
-def find_customer():
-    return render_template('findcustomer.html')
+@app.route('/create')
+def create():
+    return render_template('create.html')
+
+@app.route('/analysis')
+def analysis():
+    return render_template('analysis.html')
+
+@app.route('/create_account', methods=['POST'])
+def create_account():
+    # Collect all form data
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    phone_number = request.form.get('phone_number')
+    address = request.form.get('address')
+    DOB = request.form.get('DOB')
+    email = request.form.get('email')
+
+    # Build query for customer table with dynamic validation
+    query_customer = "INSERT INTO customer (customer_email, first_name, last_name) VALUES (%s, %s, %s)"
+    customer_params = [email, first_name, last_name]
+
+    # Build query for contact table
+    query_contact = "INSERT INTO cust_contact (customer_email, phone_number, address, DOB) VALUES (%s, %s, %s, %s)"
+    contact_params = [email, phone_number, address, DOB]
+
+    try:
+        # Establish database connection
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Check if customer already exists
+        check_query = "SELECT * FROM customer WHERE customer_email = %s"
+        cursor.execute(check_query, (email,))
+        existing_customer = cursor.fetchone()
+
+        if existing_customer:
+            return render_template(
+                'create.html', 
+                error="Customer with this email already exists."
+            )
+
+        # Insert into customer table
+        cursor.execute(query_customer, customer_params)
+
+        # Insert into contact table
+        cursor.execute(query_contact, contact_params)
+
+        # Commit the transaction
+        conn.commit()
+
+        return render_template(
+            'Login.html', 
+            success="Customer created successfully!"
+        )
+
+    except mysql.connector.Error as err:
+        # Rollback in case of error
+        conn.rollback()
+        return render_template(
+            'create.html', 
+            error=f"Database error: {err}"
+        )
+
+    finally:
+        # Always close cursor and connection
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+#when employee searches through new and used inventories
+@app.route('/search_inventory', methods=['POST'])
+def search_inventory():
+    # Get form data
+    inventory_type = request.form.get('inventory_type')  # 'new_inventory' or 'used_inventory'
+    model = request.form.get('model')
+    year = request.form.get('year')
+    manufacturing_country = request.form.get('manufacturing_country')
+    msrp_min = request.form.get('msrp_min')
+    msrp_max = request.form.get('msrp_max')
+
+    # Construct base query with JOIN
+    if inventory_type == "new_inventory":
+        query = f"""
+            SELECT
+                car_type.model,
+                inv.vin,
+                car_type.car_year,
+                car_type.manufacturing_country,
+                car_type.msrp
+            FROM {inventory_type} inv
+            JOIN car_type ON inv.type_id = car_type.type_id
+            WHERE 1=1
+        """
+    if inventory_type == "used_inventory":
+        query = "SELECT * FROM used_inventory WHERE 1=1"
+
+    params = []
+
+    # Add filters dynamically
+    if model:
+        query += " AND car_type.model = %s"
+        params.append(model)
+    if year:
+        query += " AND inv.year = %s"
+        params.append(year)
+    if manufacturing_country:
+        query += " AND car_type.manufacturing_country = %s"
+        params.append(manufacturing_country)
+    if msrp_min:
+        query += " AND car_type.msrp >= %s"
+        params.append(msrp_min)
+    if msrp_max:
+        query += " AND car_type.msrp <= %s"
+        params.append(msrp_max)
+
+    # Connect to the MySQL database
+    results = []
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+    if inventory_type == "new_inventory":
+        # Generate an HTML table from the results
+        table_html = """
+        <table border="1" style="width:100%; border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Vin</th>
+                    <th>Year</th>
+                    <th>Manufacturing Country</th>
+                    <th>MSRP</th
+                </tr>
+            </thead>
+            <tbody>
+        """
+        for row in results:
+            table_html += "<tr>"
+            for cell in row:
+                table_html += f"<td>{cell}</td>"
+            table_html += "</tr>"
+        table_html += """
+            </tbody>
+        </table>
+        """
+
+        # Render the table on a basic HTML page
+        html_template = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/greentables.css') }}">
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Inventory Search Results</title>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                }}
+                table {{
+                    margin-top: 20px;
+                    width: 100%;
+                    border: 1px solid #ccc;
+                    border-collapse: collapse;
+                }}
+                th, td {{
+                    border: 1px solid #ccc;
+                    padding: 8px;
+                    text-align: left;
+                }}
+                th {{
+                    background-color: #f2f2f2;
+                }}
+            </style>
+        </head>
+        <body>
+            <h1>Inventory Search Results</h1>
+            {table_html}
+        </body>
+        </html>
+        """
+    if inventory_type == "used_inventory":
+        # Generate an HTML table from the results
+        table_html = """
+        <table border="1" style="width:100%; border-collapse:collapse;">
+            <thead>
+                <tr>
+                    <th>Vin</th>
+                    <th>Brand</th>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>Color</th>
+                    <th>Mileage</th>
+                    <th>Condition</th>
+                    <th>Warranty Status</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+        """
+        for row in results:
+            table_html += "<tr>"
+            for cell in row:
+                table_html += f"<td>{cell}</td>"
+            table_html += "</tr>"
+        table_html += """
+            </tbody>
+        </table>
+        """
+
+        # Render the table on a basic HTML page
+        html_template = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Inventory Search Results</title>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                }}
+                table {{
+                    margin-top: 20px;
+                    width: 100%;
+                    border: 1px solid #ccc;
+                    border-collapse: collapse;
+                }}
+                th, td {{
+                    border: 1px solid #ccc;
+                    padding: 8px;
+                    text-align: left;
+                }}
+                th {{
+                    background-color: #f2f2f2;
+                }}
+            </style>
+        </head>
+        <body>
+            <h1>Inventory Search Results</h1>
+            {table_html}
+        </body>
+        </html>
+        """
+
+    return render_template_string(html_template)
 
 @app.route('/findservice')
 def find_service():
     return render_template('findservice.html')
+
+#when employee searches through new and used inventories
+@app.route('/findservice', methods=['POST'])
+def search_service():
+    # Get form data
+    service_id = request.form.get('service_id')
+    email = request.form.get('customer_email')
+    date = request.form.get('date')
+    license = request.form.get('license')
+    service_type = request.form.get('service_type')
+    employee_id = request.form.get('employee_id')
+
+    if service_id:
+        query = f"""SELECT service_id, customer_email, CONCAT(car_type.car_year, ' ', car_type.model), license_plate_number, color, service_type, appointment_date, CONCAT(employee.first_name, ' ', employee.last_name)
+        FROM service
+        JOIN car_type ON service.type_id = car_type.type_id JOIN employee ON employee.employee_id = service.employee_id
+        WHERE 1 = 1"""
+
+        params = []
+
+        query += " AND service_id = %s"
+        params.append(service_id)
+
+    else:
+        query = f"""
+            SELECT service_id, customer_email, CONCAT(car_type.car_year, ' ', car_type.model), license_plate_number, color, service_type, appointment_date, CONCAT(employee.first_name, ' ', employee.last_name)
+            FROM service
+            JOIN car_type ON service.type_id = car_type.type_id JOIN employee ON employee.employee_id = service.employee_id
+            WHERE 1 = 1
+        """
+        params = []
+
+        # Add filters dynamically
+        if email:
+            query += " AND customer_email = %s"
+            params.append(email)
+        if date:
+            query += " AND appointment_date = %s"
+            params.append(date)
+        if license:
+            query += " AND license_plate_number = %s"
+            params.append(license)
+        if service_type:
+            query += " AND service_type = %s"
+            params.append(service_type)
+        if employee_id:
+            query += " AND employee_id = %s"
+            params.append(employee_id)
+
+    # Connect to the MySQL database
+    results = []
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+
+    # Generate an HTML table from the results
+    table_html = """
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/greentables.css') }}">
+    <table border="1" style="width:100%; border-collapse:collapse;">
+        <thead>
+            <tr>
+                <th>Service ID</th>
+                <th>Customer Email</th>
+                <th>Model</th>
+                <th>License</th>
+                <th>Color</th>
+                <th>Service Type</th>
+                <th>Appointment Date</th>
+                <th>Employee</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
+    for row in results:
+        table_html += "<tr>"
+        for cell in row:
+            table_html += f"<td>{cell}</td>"
+        table_html += "</tr>"
+    table_html += """
+        </tbody>
+    </table>
+    """
+
+    # Render the table on a basic HTML page
+    html_template = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/greentables.css') }}">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Inventory Search Results</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                padding: 20px;
+            }}
+            table {{
+                margin-top: 20px;
+                width: 100%;
+                border: 1px solid #ccc;
+                border-collapse: collapse;
+            }}
+            th, td {{
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: left;
+            }}
+            th {{
+                background-color: #f2f2f2;
+            }}
+        </style>
+    </head>
+    <body>
+        <h1>Inventory Search Results</h1>
+        {table_html}
+    </body>
+    </html>
+    """
+
+    return render_template_string(html_template)
 
 @app.route('/home2')
 def home2():
@@ -53,12 +444,46 @@ def find_sale():
 
     return render_template('findsale.html', sales=sales)
 
+@app.route('/sale_search', methods=['POST'])
+def sale_search():
+    sale_id = request.form.get('sale_id')
+    customer_email = request.form.get('customer_email')
+    sale_date = request.form.get('sale_date')
+    employee_id = request.form.get('employee_id')
+
+    # Build the query
+    query = "SELECT * FROM sale WHERE 1=1"
+    params = []
+
+    if sale_id:
+        query += " AND sale_id = %s"
+        params.append(sale_id)
+    if customer_email:
+        query += " AND customer_email = %s"
+        params.append(customer_email)
+    if sale_date:
+        query += " AND sale_date = %s"
+        params.append(sale_date)
+    if employee_id:
+        query += " AND employee_id = %s"
+        params.append(employee_id)
+
+    # Execute the query
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor()
+    cursor.execute(query, params)
+    sales = cursor.fetchall()
+    conn.close()
+
+    # Render results in the HTML template
+    return render_template('findsale.html', sales=sales)
+
 
 # Database configuration
 db_config = {
     'host': '127.0.0.1',
     'user': 'root',  # Your MySQL username
-    'password': '',  # Your MySQL password
+    'password': 'admin',  # Your MySQL password
     'database': 'bmw_dealership_db'
 }
 
@@ -134,9 +559,9 @@ def car_inventory():
 
         # Query to get car details from new_inventory joined with car_type
         query = """
-        SELECT ni.*, ct.model, ct.manufacturing_country 
+        SELECT ni.*, ct.model, ct.manufacturing_country
         FROM new_inventory ni
-        JOIN car_type ct ON ni.type_id = ct.type_id 
+        JOIN car_type ct ON ni.type_id = ct.type_id
         WHERE ct.type_id = %s
         """
 
@@ -146,7 +571,36 @@ def car_inventory():
         if rows:
             # Build HTML table for displaying results
             html_table = """
-            <table border="1">
+            <style>
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 1em;
+                font-family: Arial, sans-serif;
+                min-width: 400px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            }}
+            table thead tr {{
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+            }}
+                table th, table td {{
+                padding: 12px 15px;
+                border: 1px solid #dddddd;
+            }}
+            table tbody tr {{
+                border-bottom: 1px solid #dddddd;
+            }}
+            table tbody tr:nth-of-type(even) {{
+                background-color: #f3f3f3;
+            }}
+            table tbody tr:last-of-type {{
+                border-bottom: 2px solid #009879;
+            }}
+            </style>
+            <table>
                 <thead>
                     <tr>
                         <th>Car ID</th>
@@ -188,6 +642,156 @@ def car_inventory():
         cursor.close()
         conn.close()
 
+
+@app.route('/purchase', methods=['POST'])
+def purchase():
+    model = request.form.get('model')
+    car_color = request.form.get('color')
+    customer_email = request.form.get('customer_email')
+    employee_id = request.form.get('employee_id')
+    sale_date = request.form.get('sale_date')
+
+    if not (model and car_color and customer_email and employee_id and sale_date):
+        return "Missing data", 400
+
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        query_car = """
+            SELECT new_inventory.vin, car_type.msrp
+            FROM car_type
+            JOIN new_inventory ON car_type.type_id = new_inventory.type_id
+            WHERE car_type.model = %s AND new_inventory.color = %s
+        """
+        cursor.execute(query_car, (model, car_color))
+        car = cursor.fetchone()
+
+        if car is not None:
+            vin = car[0]
+            sale_price = car[1]
+
+            cursor.execute("SELECT MAX(CAST(SUBSTRING(sale_id, 2) AS UNSIGNED)) FROM sale")
+            max_id = cursor.fetchone()[0]
+            if max_id is None:
+                sale_id = "S1"
+            else:
+                sale_id = f"S{max_id + 1}"
+
+            query_add_sale = """
+                INSERT INTO sale (sale_id, customer_email, vin, sale_date, sale_price, employee_id)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            conn.commit()
+            cursor.execute(query_add_sale, (customer_email, vin, sale_date, sale_price, employee_id))
+
+            query_remove_car = "DELETE FROM new_inventory WHERE vin = %s"
+            cursor.execute(query_remove_car, (vin,))
+
+            conn.commit()
+            return f"Purchase successful! Sale ID: {sale_id}"
+
+        else:
+            return "Car not found", 404
+
+    except mysql.connector.Error as err:
+        return f"Error: {err}", 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/get_customer', methods=['GET', 'POST'])
+def get_customer():
+    # Get user input from the form
+    search_entry = request.form.get('query')
+
+    # Base SQL query
+    query = " SELECT CONCAT(first_name, ' ', last_name) AS Name, customer.customer_email AS Email, cust_contact.phone_number AS Phone, cust_contact.address AS Address FROM customer JOIN cust_contact ON customer.customer_email = cust_contact.customer_email"
+    params = []
+
+    # Add conditions based on user input
+    if search_entry:
+        query += " AND (first_name LIKE '" + search_entry + "' OR last_name LIKE '" + search_entry + "' OR CONCAT(first_name, ' ', last_name) LIKE '" + search_entry + "')"
+
+    try:
+        # Database connection
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute(query, params)  # Use parameterized query
+        rows = cursor.fetchall()
+        headers = [desc[0] for desc in cursor.description]
+
+        # Handle empty results
+        if rows:
+            # Build HTML table
+            html_table = """
+            <style>
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 1em;
+                font-family: Arial, sans-serif;
+                min-width: 400px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            }}
+            table thead tr {{
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+            }}
+                table th, table td {{
+                padding: 12px 15px;
+                border: 1px solid #dddddd;
+            }}
+            table tbody tr {{
+                border-bottom: 1px solid #dddddd;
+            }}
+            table tbody tr:nth-of-type(even) {{
+                background-color: #f3f3f3;
+            }}
+            table tbody tr:last-of-type {{
+                border-bottom: 2px solid #009879;
+            }}
+            </style>
+            <table>
+                <thead>
+                    <tr>{}</tr>
+                </thead>
+                <tbody>
+                    {}
+                </tbody>
+            </table>
+            """.format(
+                "".join(f"<th>{col}</th>" for col in headers),
+                "".join(
+                    "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
+                    for row in rows
+                )
+            )
+        else:
+            html_table = "<p>No results found.</p>"
+
+        # Return rendered HTML
+        return render_template_string("""
+        <html>
+        <body>
+            <h2>Customer Contact Results</h2>
+            {{ table|safe }}
+            <br>
+            <a href="{{ url_for('find_customer') }}">Back to Search</a>
+        </body>
+        </html>
+        """, table=html_table)
+
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+
+    finally:
+        cursor.close()
+        conn.close()
+
 @app.route('/employee_contact', methods=['GET', 'POST'])
 def employee_contact():
     # Get user input from the form
@@ -213,7 +817,36 @@ def employee_contact():
         if rows:
             # Build HTML table
             html_table = """
-            <table border="1">
+            <style>
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 1em;
+                font-family: Arial, sans-serif;
+                min-width: 400px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            }}
+            table thead tr {{
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+            }}
+                table th, table td {{
+                padding: 12px 15px;
+                border: 1px solid #dddddd;
+            }}
+            table tbody tr {{
+                border-bottom: 1px solid #dddddd;
+            }}
+            table tbody tr:nth-of-type(even) {{
+                background-color: #f3f3f3;
+            }}
+            table tbody tr:last-of-type {{
+                border-bottom: 2px solid #009879;
+            }}
+            </style>
+            <table>
                 <thead>
                     <tr>{}</tr>
                 </thead>
@@ -250,6 +883,76 @@ def employee_contact():
         cursor.close()
         conn.close()
 
+#employee search method for employee
+@app.route('/search_employee', methods=['GET', 'POST'])
+def search_employee():
+    # Get user input from the form
+    first_name = request.values.get('first_name')
+    last_name = request.values.get('last_name')
+    employee_id = request.values.get('employee_id')
+    department_name = request.values.get('department_name')
+
+    # Create query
+    query = """SELECT e.employee_id, e.first_name, e.last_name, e.department_id,
+                      department.department_name, emp_info.phone_number, emp_info.email,
+                      emp_info.address, emp_info.salary
+               FROM employee e
+               JOIN department ON department.department_id = e.department_id
+               JOIN emp_info ON emp_info.email = e.email
+               WHERE 1=1
+            """
+    params = []
+
+    if first_name:
+        query += " AND first_name LIKE %s"
+        params.append(f"%{first_name}%")
+    if last_name:
+        query += " AND last_name LIKE %s"
+        params.append(f"%{last_name}%")
+    if employee_id:
+        query += " AND employee_id LIKE %s"
+        params.append(f"%{employee_id}%")
+    if department_name:
+        query += " AND department_name LIKE %s"
+        params.append(f"%{department_name}%")
+
+    # Connect to database and try query
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+
+        # Ensure rows is an empty list if no data is found
+        if not rows:
+            rows = []
+
+        headers = [desc[0] for desc in cursor.description]
+
+        if rows:
+            return render_template(
+                'find_employee_results.html',
+                headers=headers,
+                rows=rows
+            )
+        else:
+            return render_template(
+                'find_employee_results.html',
+                headers=headers,
+                rows=None,
+                message="No employees match your search criteria."
+            )
+
+    except mysql.connector.Error as err:
+        return f"Error: {err}"
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
+
 @app.route('/Login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -257,26 +960,21 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         user_type = request.form.get('user-type')
-
         # Validate input
         if not username or not password or not user_type:
             return render_template('Login.html', error="Please fill all fields.")
-
         try:
             # Database connection
             conn = mysql.connector.connect(**db_config)
             cursor = conn.cursor()
-
             # Determine query based on user type
             if user_type == 'Customer':
                 query = "SELECT * FROM customer JOIN cust_contact ON customer.customer_email = cust_contact.customer_email WHERE customer.customer_email = %s AND cust_contact.password = %s"
             else:
                 query = "SELECT * FROM employee JOIN emp_info ON employee.email = emp_info.email WHERE employee.email = %s AND emp_info.password = %s"
-
             # Execute query
             cursor.execute(query, (username, password))
             result = cursor.fetchone()
-
             if result:
                 # Redirect based on user type
                 if user_type == 'Customer':
@@ -285,14 +983,149 @@ def login():
                     return redirect(url_for('home2'))
             else:
                 return render_template('Login.html', error="Incorrect username or password.")
-
-
         finally:
             cursor.close()
             conn.close()
 
+@app.route('/analyze', methods=['GET', 'POST'])
+def analyze():
+    # Get user input from the form
+    analysis_type = request.args.get('query_type')
+
+    # Base SQL query
+    query = ""
+    params = []
+
+    # Add conditions based on user input
+    if analysis_type:
+        if analysis_type == "top_customers":
+            query = """SELECT 
+                        c.first_name AS "First Name",
+                        c.last_name AS "Last Name",
+                        c.customer_email AS "Email",
+                        SUM(s.sale_price) AS Spending,
+                        COUNT(s.sale_id) AS "Total Purchases"
+                        FROM customer c
+                        JOIN sale s ON c.customer_email = s.customer_email
+                        GROUP BY c.customer_email
+                        ORDER BY Spending DESC
+                        LIMIT 10"""
+        elif analysis_type == "top_employees":
+            query = """SELECT 
+                e.first_name AS "First Name", 
+                e.last_name AS "Last Name", 
+                e.employee_id AS ID, 
+                COUNT(s.sale_id) AS Sales, 
+                SUM(s.sale_price) AS "Total Revenue"
+                FROM employee e
+                JOIN sale s ON e.employee_id = s.employee_id
+                GROUP BY e.employee_id
+                ORDER BY Sales DESC
+                LIMIT 10;"""
+        else:
+            query = """SELECT 
+                    CASE 
+                    WHEN TIMESTAMPDIFF(YEAR, cc.DOB, CURDATE()) BETWEEN 18 AND 25 THEN '18-25'
+                    WHEN TIMESTAMPDIFF(YEAR, cc.DOB, CURDATE()) BETWEEN 26 AND 35 THEN '26-35'
+                    WHEN TIMESTAMPDIFF(YEAR, cc.DOB, CURDATE()) BETWEEN 36 AND 45 THEN '36-45'
+                    WHEN TIMESTAMPDIFF(YEAR, cc.DOB, CURDATE()) BETWEEN 46 AND 60 THEN '46-60'
+                    ELSE '60+'
+                    END AS Age,
+                    COUNT(s.sale_id) AS "Total Sales",
+                    SUM(s.sale_price) AS "Total Spending",
+                    ROUND(AVG(s.sale_price), 2) AS "Average Spending"
+                    FROM cust_contact cc
+                    JOIN customer c ON cc.customer_email = c.customer_email
+                    JOIN sale s ON c.customer_email = s.customer_email
+                    GROUP BY Age
+                    ORDER BY "Total Spending" DESC;"""
+
+    try:
+        # Database connection
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute(query, params)  # Use parameterized query
+        if cursor.with_rows:  # Ensure the query returns a result set
+            rows = cursor.fetchall()
+            headers = [desc[0] for desc in cursor.description]
+        else:
+            rows = []
+            headers = []
+
+        # Handle empty results
+        if rows:
+           # Build HTML table
+            html_table = """
+            <style>
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 1em;
+                font-family: Arial, sans-serif;
+                min-width: 400px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            }}
+            table thead tr {{
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+            }}
+                table th, table td {{
+                padding: 12px 15px;
+                border: 1px solid #dddddd;
+            }}
+            table tbody tr {{
+                border-bottom: 1px solid #dddddd;
+            }}
+            table tbody tr:nth-of-type(even) {{
+                background-color: #f3f3f3;
+            }}
+            table tbody tr:last-of-type {{
+                border-bottom: 2px solid #009879;
+            }}
+            </style>
+            <table>
+                <thead>
+                    <tr>{}</tr>
+                </thead>
+                <tbody>
+                    {}
+                </tbody>
+            </table>
+            """.format(
+                "".join(f"<th>{col}</th>" for col in headers),
+                "".join(
+                    "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
+                    for row in rows
+                )
+            )
+
+        else:
+            html_table = "<p>No results found.</p>"
+
+        return render_template_string("""
+        <html>
+        <body>
+            <h2>Data Analysis</h2>
+            {{ table|safe }}
+            <br>
+            <a href="{{ url_for('analysis') }}">Back to Search</a>
+        </body>
+        </html>
+        """, table=html_table)
+
+    except mysql.connector.Error as err:
+        # Log error for debugging
+        print(f"Database error: {err}")
+        return f"Database error: {err}", 500
+
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 # Only one app.run() needed, here at the bottom.
 if __name__ == '__main__':
     app.run(debug=True)
-
