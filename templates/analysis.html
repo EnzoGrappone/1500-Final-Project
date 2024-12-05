@@ -12,7 +12,7 @@
         <p>BMW Pittsburgh</p>
 
         <div class="dropdown">
-            <button class="dropb">Customer</button>
+            <button class="dropb">Employee</button>
             <div class="dropdown-content">
               <a href="{{ url_for('home2') }}">Main</a>
               <a href="{{ url_for('stock') }}">In stock</a>
@@ -33,11 +33,11 @@
 
     <div class="newtext">
         <!-- Form submission to /data_analysis route -->
-        <form method="GET" action="{{ url_for('analysis') }}">
+        <form method="GET" action="{{ url_for('analyze') }}">
             <label for="query-type">Select Query:</label>
             <select name="query_type" id="query-type">
-                <option value="top_customers">Top Customers for a Product</option>
-                <option value="most_popular_product">Most Popular Product</option>
+                <option value="top_customers">Top Customers</option>
+                <option value="top_employees">Top Selling Employees</option>
                 <option value="age_group_spending">Customer Age Groups by Spending</option>
             </select><br>
 
@@ -56,3 +56,4 @@
     </div>
 </body>
 </html>
+
