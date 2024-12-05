@@ -61,40 +61,7 @@
         </form>
     </div>
 
-    <!-- Sale Records Table -->
-    {% if sales %}
-        <div class="sales-table">
-            <h3>Sale Records:</h3>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Sale ID</th>
-                        <th>Customer Email</th>
-                        <th>Vin</th>
-                        <th>Sale Date</th>
-                        <th>Sale Price</th>
-                        <th>Employee ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for sale in sales %}
-                        <tr>
-                            <td>{{ sale[0] }}</td> <!-- Sale ID -->
-                            <td>{{ sale[1] }}</td> <!-- Customer Email -->
-                            <td>{{ sale[2] }}</td> <!-- Vin -->
-                            <td>{{ sale[3] }}</td> <!-- Sale Date -->
-                            <td>{{ sale[4] }}</td> <!-- Sale Price -->
-                            <td>{{ sale[5] }}</td> <!-- Employee ID -->
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <div class="newtext">
-            <p>No sale records found. Please adjust your search criteria.</p>
-        </div>
-    {% endif %}
+    
 
     <div class="new2text">
         <p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>

@@ -413,7 +413,20 @@ def sale_search():
     conn.close()
 
     # Render results in the HTML template
-    return render_template('findsale.html', sales=sales)
+    if rows:
+        return render_template(
+            'find_sale_results.html',
+            headers=headers,
+            rows=rows
+        )
+    else:
+        return render_template(
+            'find_sale_results.html',
+            headers=None,
+            rows=None,
+            message="No sale match your search criteria."
+        )
+
 
 
 # Database configuration
