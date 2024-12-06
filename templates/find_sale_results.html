@@ -11,17 +11,17 @@
         </tr>
     </thead>
     <tbody>
-      {% if rows %}
-        {% for sale in sales %}
-            <tr>
-                <td>{{ sale[0] }}</td> <!-- Sale ID -->
-                <td>{{ sale[1] }}</td> <!-- Customer Email -->
-                <td>{{ sale[2] }}</td> <!-- Vin -->
-                <td>{{ sale[3] }}</td> <!-- Sale Date -->
-                <td>{{ sale[4] }}</td> <!-- Sale Price -->
-                <td>{{ sale[5] }}</td> <!-- Employee ID -->
-            </tr>
-        {% endfor %}
+        {% if rows and rows|length > 0 %}
+            {% for row in rows %}
+                <tr>
+                    <td>{{ row[0] }}</td> <!-- Sale ID -->
+                    <td>{{ row[1] }}</td> <!-- Customer Email -->
+                    <td>{{ row[2] }}</td> <!-- Vin -->
+                    <td>{{ row[3] }}</td> <!-- Sale Date -->
+                    <td>{{ row[4] }}</td> <!-- Sale Price -->
+                    <td>{{ row[5] }}</td> <!-- Employee ID -->
+                </tr>
+                {% endfor %}
         {% else %}
         <tr>
           <td colspan="5" style="text-align: center;">No sale records found. Please adjust your search criteria.</td>
