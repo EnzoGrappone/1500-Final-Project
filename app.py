@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, render_template_string, redirect, url_for
 import mysql.connector
+import re
 
 app = Flask(__name__)
 
@@ -42,6 +43,67 @@ def create():
 @app.route('/analysis')
 def analysis():
     return render_template('analysis.html')
+
+@app.route('/create_account', methods=['POST'])
+def create_account():
+    # Collect all form data
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    phone_number = request.form.get('phone_number')
+    address = request.form.get('address')
+    DOB = request.form.get('DOB')
+    email = request.form.get('email')
+    password = request.form.get('password')
+    confirm = request.form.get('confirm_password')
+
+    if(password != confirm):
+        return render_template(
+                'create.html', 
+                error="Passwords do not match."
+            )
+
+    # Build query for customer table with dynamic validation
+    query_customer = "INSERT INTO customer (customer_email, first_name, last_name) VALUES (%s, %s, %s)"
+    customer_params = [email, first_name, last_name]
+    # Build query for contact table
+    query_contact = "INSERT INTO cust_contact (customer_email, phone_number, address, DOB, password) VALUES (%s, %s, %s, %s, %s)"
+    contact_params = [email, phone_number, address, DOB, password]
+    try:
+        # Establish database connection
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        # Check if customer already exists
+        check_query = "SELECT * FROM customer WHERE customer_email = %s"
+        cursor.execute(check_query, (email,))
+        existing_customer = cursor.fetchone()
+        if existing_customer:
+            return render_template(
+                'create.html', 
+                error="Customer with this email already exists."
+            )
+        # Insert into customer table
+        cursor.execute(query_customer, customer_params)
+        # Insert into contact table
+        cursor.execute(query_contact, contact_params)
+        # Commit the transaction
+        conn.commit()
+        return render_template(
+            'Login.html', 
+            success="Customer created successfully!"
+        )
+    except mysql.connector.Error as err:
+        # Rollback in case of error
+        conn.rollback()
+        return render_template(
+            'create.html', 
+            error="Incorrect data inputted."
+        )
+    finally:
+        # Always close cursor and connection
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 #when employee searches through new and used inventories
 @app.route('/search_inventory', methods=['POST'])
@@ -409,7 +471,8 @@ def sale_search():
     conn = mysql.connector.connect(**db_config)
     cursor = conn.cursor()
     cursor.execute(query, params)
-    sales = cursor.fetchall()
+    rows = cursor.fetchall()
+    headers = [desc[0] for desc in cursor.description]
     conn.close()
 
     # Render results in the HTML template
@@ -433,7 +496,7 @@ def sale_search():
 db_config = {
     'host': '127.0.0.1',
     'user': 'root',  # Your MySQL username
-    'password': 'admin',  # Your MySQL password
+    'password': 'Steel-2643',  # Your MySQL password
     'database': 'bmw_dealership_db'
 }
 
@@ -592,7 +655,6 @@ def car_inventory():
         cursor.close()
         conn.close()
 
-
 @app.route('/purchase', methods=['POST'])
 def purchase():
     model = request.form.get('model')
@@ -615,33 +677,77 @@ def purchase():
             WHERE car_type.model = %s AND new_inventory.color = %s
         """
         cursor.execute(query_car, (model, car_color))
-        car = cursor.fetchone()
+        car = cursor.fetchall()
 
-        if car is not None:
-            vin = car[0]
-            sale_price = car[1]
+        if car:
+            vin = ''.join(str(car[0][0]))
+            vin = re.sub(r'[^A-Za-z0-9]', '', vin)
+            max_length = 17  # Replace with the actual column limit
+            if len(vin) > max_length:
+                vin = vin[:max_length]
 
-            cursor.execute("SELECT MAX(CAST(SUBSTRING(sale_id, 2) AS UNSIGNED)) FROM sale")
-            max_id = cursor.fetchone()[0]
+            sale_price = ''.join(str(car[0][1]))
+            sale_price = sale_price.replace(",", "")
+            sale_price = sale_price.replace(")", "")
+            sale_price = sale_price.replace("(", "")
+
+            cursor.execute("SELECT MAX(CAST(SUBSTRING(sale_id, 3) AS UNSIGNED)) FROM sale")
+            max_id = ''.join(str(cursor.fetchall()[0]))
+            max_id = max_id.replace(",", "")
+            max_id = max_id.replace(")", "")
+            max_id = max_id.replace("(", "")
             if max_id is None:
-                sale_id = "S1"
+                sale_id = "SA1"
             else:
-                sale_id = f"S{max_id + 1}"
+                max = int(max_id)
+                sale = f"SA{(max) + 1}"
 
             query_add_sale = """
                 INSERT INTO sale (sale_id, customer_email, vin, sale_date, sale_price, employee_id)
                 VALUES (%s, %s, %s, %s, %s, %s)
             """
-            cursor.execute(query_add_sale, (customer_email, vin, sale_date, sale_price, employee_id))
+            cursor.execute(query_add_sale, (sale, customer_email, vin, sale_date, sale_price, employee_id))
 
             query_remove_car = "DELETE FROM new_inventory WHERE vin = %s"
             cursor.execute(query_remove_car, (vin,))
 
             conn.commit()
-            return f"Purchase successful! Sale ID: {sale_id}"
+            return render_template_string("""
+                <html>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            text-align: center;
+                            padding: 20px;
+                        }
+                    </style>
+                    <body>                    
+                        <h2>Purchase successful! Sale ID: {{ sale }}</h2>
+                        <br>
+                        <a href="{{ url_for('purchase_car') }}">Back to Search</a>
+                    </body>
+                </html>
+            """, sale=sale)
+
 
         else:
-            return "Car not found", 404
+            return render_template_string("""
+                <html>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            text-align: center;
+                            padding: 20px;
+                        }
+                    </style>
+                    <body>
+                        <h2>Invalid data. Please try again.</h2>
+                        <br>
+                        <a href="{{ url_for('purchase_car') }}">Back to Search</a>
+                    </body>
+                </html>
+            """)
+
 
     except mysql.connector.Error as err:
         return f"Error: {err}", 500
@@ -936,7 +1042,136 @@ def login():
             cursor.close()
             conn.close()
 
-
+@app.route('/analyze', methods=['GET', 'POST'])
+def analyze():
+    # Get user input from the form
+    analysis_type = request.args.get('query_type')
+    # Base SQL query
+    query = ""
+    params = []
+    # Add conditions based on user input
+    if analysis_type:
+        if analysis_type == "top_customers":
+            query = """SELECT 
+                        c.first_name AS "First Name",
+                        c.last_name AS "Last Name",
+                        c.customer_email AS "Email",
+                        SUM(s.sale_price) AS Spending,
+                        COUNT(s.sale_id) AS "Total Purchases"
+                        FROM customer c
+                        JOIN sale s ON c.customer_email = s.customer_email
+                        GROUP BY c.customer_email
+                        ORDER BY Spending DESC
+                        LIMIT 10"""
+        elif analysis_type == "top_employees":
+            query = """SELECT 
+                e.first_name AS "First Name", 
+                e.last_name AS "Last Name", 
+                e.employee_id AS ID, 
+                COUNT(s.sale_id) AS Sales, 
+                SUM(s.sale_price) AS "Total Revenue"
+                FROM employee e
+                JOIN sale s ON e.employee_id = s.employee_id
+                GROUP BY e.employee_id
+                ORDER BY Sales DESC
+                LIMIT 10;"""
+        else:
+            query = """SELECT 
+                    CASE 
+                    WHEN TIMESTAMPDIFF(YEAR, cc.DOB, CURDATE()) BETWEEN 18 AND 25 THEN '18-25'
+                    WHEN TIMESTAMPDIFF(YEAR, cc.DOB, CURDATE()) BETWEEN 26 AND 35 THEN '26-35'
+                    WHEN TIMESTAMPDIFF(YEAR, cc.DOB, CURDATE()) BETWEEN 36 AND 45 THEN '36-45'
+                    WHEN TIMESTAMPDIFF(YEAR, cc.DOB, CURDATE()) BETWEEN 46 AND 60 THEN '46-60'
+                    ELSE '60+'
+                    END AS Age,
+                    COUNT(s.sale_id) AS "Total Sales",
+                    SUM(s.sale_price) AS "Total Spending",
+                    ROUND(AVG(s.sale_price), 2) AS "Average Spending"
+                    FROM cust_contact cc
+                    JOIN customer c ON cc.customer_email = c.customer_email
+                    JOIN sale s ON c.customer_email = s.customer_email
+                    GROUP BY Age
+                    ORDER BY "Total Spending" DESC;"""
+    try:
+        # Database connection
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute(query, params)  # Use parameterized query
+        if cursor.with_rows:  # Ensure the query returns a result set
+            rows = cursor.fetchall()
+            headers = [desc[0] for desc in cursor.description]
+        else:
+            rows = []
+            headers = []
+        # Handle empty results
+        if rows:
+           # Build HTML table
+            html_table = """
+            <style>
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+                font-size: 1em;
+                font-family: Arial, sans-serif;
+                min-width: 400px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            }}
+            table thead tr {{
+                background-color: #009879;
+                color: #ffffff;
+                text-align: left;
+            }}
+                table th, table td {{
+                padding: 12px 15px;
+                border: 1px solid #dddddd;
+            }}
+            table tbody tr {{
+                border-bottom: 1px solid #dddddd;
+            }}
+            table tbody tr:nth-of-type(even) {{
+                background-color: #f3f3f3;
+            }}
+            table tbody tr:last-of-type {{
+                border-bottom: 2px solid #009879;
+            }}
+            </style>
+            <table>
+                <thead>
+                    <tr>{}</tr>
+                </thead>
+                <tbody>
+                    {}
+                </tbody>
+            </table>
+            """.format(
+                "".join(f"<th>{col}</th>" for col in headers),
+                "".join(
+                    "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
+                    for row in rows
+                )
+            )
+        else:
+            html_table = "<p>No results found.</p>"
+        return render_template_string("""
+        <html>
+        <body>
+            <h2>Data Analysis</h2>
+            {{ table|safe }}
+            <br>
+            <a href="{{ url_for('analysis') }}">Back to Search</a>
+        </body>
+        </html>
+        """, table=html_table)
+    except mysql.connector.Error as err:
+        # Log error for debugging
+        print(f"Database error: {err}")
+        return f"Database error: {err}", 500
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 
 # Only one app.run() needed, here at the bottom.
 if __name__ == '__main__':
