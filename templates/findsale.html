@@ -25,13 +25,14 @@
         <div class="dropdown">
             <button class="dropb">Employee</button>
             <div class="dropdown-content">
-                <a href="{{ url_for('home2') }}">Main</a>
-                <a href="{{ url_for('stock') }}">In stock</a>
-                <a href="{{ url_for('find_employee1') }}">Find an Employee Record</a>
-                <a href="{{ url_for('find_service') }}">Find a Service Record</a>
-                <a href="{{ url_for('find_sale') }}">Find a Sale</a>
-                <a href="{{ url_for('find_customer') }}">Find a Customer</a>
+                <a href="{{url_for ('home2')}}">Main</a>
+                <a href="{{url_for ('stock')}}">In stock</a>
+                <a href="{{url_for ('find_employee1')}}">Find an employee Record</a>
+                <a href="{{url_for ('find_service')}}">Find a Service Record</a>
+                <a href="{{url_for ('find_sale')}}">Find a Sale</a>
+                <a href="{{url_for ('find_customer')}}">Find a Customer</a>
                 <a href="{{ url_for('analysis') }}">Customer Analysis</a>
+                <a href="{{ url_for('purchase_car') }}">Purchase a vehicle</a>
 
             </div>
         </div>
