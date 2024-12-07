@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/Style_3.css') }}">
+    <title>SQL Query Executor</title>
+    <script> function checkPasscode()
+    { var passcode = prompt("Enter passcode:");
+    if (passcode === "1234") {
+      document.getElementById("employeeDropdown").style.display = "block";
+    }
+    else {
+       alert("Incorrect passcode. Access denied.");
+     }
+   }
+ </script>
+</head>
+<body>
+  <div class="column">
+  <img src="{{ url_for('static', filename='/BMW-Logo.png') }}" alt="A picture of BMW logo" style="width:7%; max-height:7%">
+  <p>BMW Pittsburgh</p>
+
+
+
+  <div class="dropdown">
+  <button class="dropb">Customer</button>
+  <div class="dropdown-content">
+    <a href="{{ url_for('home1') }}">Main</a>
+    <a href="{{ url_for('find_car') }}">Find a car</a>
+    <a href="{{ url_for('find_employee2') }}">Contact us</a>
+    <a href="{{ url_for('myaccount') }}">My account</a>
+
+
+  </div>
+  </div>
+
+</div>
+
+  <div class="newtext">
+    <h2>Update account information</h2>
+    <p>Fill in email, password, and any other information you would like to update.</p>
+  </div>
+  <div class="newtext">
+
+    <h4><form method="POST" action="{{ url_for('update_account') }}" >
+
+        <label for="customer_email" style="color:red;">Email Address:</label>
+        <input type="text" name="email" id="email" placeholder="Enter your current email address"><br>
+
+        <label for="password">New Password:</label>
+        <input type="text" id="password" name="new_password" placeholder="Enter your current password"><br>
+
+        <label for="address">New Address:</label>
+        <input type="text" id="address" name="address" placeholder="Enter your new Address"><br>
+
+        <label for="phone">New Phone Number:</label>
+        <input type="text" id="phone_number" name="phone_number" maxlength="11" minlength="11" placeholder="Enter your new phone number"><br>
+
+        <label for="password"style="color:red;">Password:</label>
+        <input type="text" id="password" name="password" placeholder="Enter your new password"><br>
+
+
+        <input type="submit" value="Update">
+    </form>
+    <script>
+      function validateForm() {
+          var email = document.getElementById('email').value;
+          var password = document.getElementById('current_password').value;
+          
+          if (!email || !password) {
+              alert('Email and current password are required');
+              return false;
+          }
+          return true;
+      }
+      </script>
+  </h4>
+  </div>
+
+  <div class="new2text">
+  	<p>Copyright © 2024 Bowen Ye, Enzo Grappone, Evan Fuccio</p>
+  </div>
+
+</body>
+</html>
