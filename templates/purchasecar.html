@@ -31,7 +31,7 @@
     <a href="{{url_for ('find_sale')}}">Find a Sale</a>
     <a href="{{url_for ('find_customer')}}">Find a Customer</a>
     <a href="{{ url_for('analysis') }}">Customer Analysis</a>
-    <a href="{{ url_for('purchase_car') }}">Purchase a vehicle</a>
+    <a href="{{ url_for('purchase_car') }}">Submit a purchase</a>
 
 
   </div>
@@ -40,7 +40,7 @@
 </div>
 
   <div class="newtext">
-    <h2>Which model are you interested?</h2>
+    <h2>Submit Purchase</h2>
   </div>
   <div class="newtext">
 
@@ -50,7 +50,7 @@
       <input type="text" id="model" name="model" placeholder="Enter car model" required><br>
       <label for="color">Color:</label>
       <input type="text" id="color" name="color" placeholder="Enter car color" required><br>
-      <label for="customer_email">Your Email:</label>
+      <label for="customer_email">Customer Email:</label>
       <input type="text" id="customer_email" name="customer_email" placeholder="Please enter your email" required><br>
       <label for="sale_date">Sale Date:</label>
       <input type="date" id="sale_date" name="sale_date" required><br>
