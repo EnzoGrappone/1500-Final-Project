@@ -44,6 +44,10 @@ def create():
 def analysis():
     return render_template('analysis.html')
 
+@app.route('/myaccount')
+def myaccount():
+    return render_template('myaccount.html')
+
 @app.route('/create_account', methods=['POST'])
 def create_account():
     # Collect all form data
@@ -676,10 +680,21 @@ def purchase():
             JOIN new_inventory ON car_type.type_id = new_inventory.type_id
             WHERE car_type.model = %s AND new_inventory.color = %s
         """
+
+        query_cust = "SELECT * FROM customer WHERE customer_email = %s"
+
+        query_emp = "SELECT * FROM employee WHERE employee_id = %s"
+
         cursor.execute(query_car, (model, car_color))
         car = cursor.fetchall()
 
-        if car:
+        cursor.execute(query_cust, (customer_email,))
+        customer = cursor.fetchall()
+
+        cursor.execute(query_emp, (employee_id,))
+        employee = cursor.fetchall()
+
+        if car and customer and employee:
             vin = ''.join(str(car[0][0]))
             vin = re.sub(r'[^A-Za-z0-9]', '', vin)
             max_length = 17  # Replace with the actual column limit
@@ -1173,6 +1188,109 @@ def analyze():
         if 'conn' in locals():
             conn.close()
 
+@app.route('/myaccount', methods=['GET', 'POST'])
+def update_account():
+    # Get user input from the form
+    email = request.form.get('email')
+    password = request.form.get('password')
+    new_password = request.form.get('new_password')
+    address = request.form.get('address')
+    phone_number = request.form.get('phone_number')
+    
+    # Print all received values for debugging
+    print(f"Received values:")
+    print(f"Email: {email}")
+    print(f"Password: {password}")
+    print(f"New Password: {new_password}")
+    print(f"Address: {address}")
+    print(f"Phone Number: {phone_number}")
+    
+    # Validate input
+    try:
+        # Database connection
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        
+        # Verify existing user credentials
+        verify_query = "SELECT * FROM customer JOIN cust_contact ON customer.customer_email = cust_contact.customer_email WHERE customer.customer_email = %s AND cust_contact.password = %s"
+        cursor.execute(verify_query, (email, password))
+        result = cursor.fetchone()
+        
+        if result:
+            # Prepare update query with only non-empty fields
+            query = "UPDATE cust_contact SET customer_email = customer_email"
+            values = []
+
+            if new_password:
+                query += ", password = %s"
+                values.append(new_password)
+
+            if address:
+                query += ", address = %s"
+                values.append(address)
+
+            if phone_number:
+                query += ", phone_number = %s"
+                values.append(phone_number)
+
+            # Add the WHERE clause
+            query += " WHERE customer_email = %s"
+            values.append(email)
+
+            
+            cursor.execute(query, values)
+            conn.commit()
+            
+            return render_template_string("""
+                <html>
+                <style>
+                body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                padding: 20px;
+                }
+                </style>
+                <body>
+                <h2>Update successful!</h2>
+                <br>
+                <a href="{{ url_for('home1') }}">Back to Home</a>
+                </body>
+                </html>
+                """)
+                
+        else:
+            return render_template_string("""
+                 <html>
+                 <style>
+                 body {
+                 font-family: Arial, sans-serif;
+                 text-align: center;
+                 padding: 20px;
+                 }
+                 </style>
+                 <body>
+                 <h2>Incorrect username or bassword.</h2>
+                 <br>
+                 <a href="{{ url_for('myaccount') }}">Back to Update Account</a>
+                 </body>
+                 </html>
+                 """)
+    
+    except mysql.connector.Error as err:
+        # Log error for debugging
+        print(f"Database error: {err}")
+        return f"Database error: {err}", 500
+    
+    except Exception as e:
+        # Catch any other unexpected errors
+        print(f"Unexpected error: {e}")
+        return f"Unexpected error: {e}", 500
+    
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
 # Only one app.run() needed, here at the bottom.
 if __name__ == '__main__':
     app.run(debug=True)
